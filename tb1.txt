@@ -1,0 +1,236 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+public class TalabiaChess extends JFrame implements ActionListener {
+    private final int ROWS = 7;
+    private final int COLS = 6;
+    private final int SQUARE_SIZE = 80;
+    private final int BOARD_WIDTH = COLS * SQUARE_SIZE;
+    private final int BOARD_HEIGHT = ROWS * SQUARE_SIZE;
+    private final String[] PIECE_NAMES = {"King", "Rook", "Knight", "Pawn"};
+    private final String[] PIECE_COLORS = {"Yellow", "Blue"};
+    private final String[] PIECE_IMAGES = {"yellow_king.png", "yellow_rook.png", "yellow_knight.png", "yellow_pawn.png",
+            "blue_king.png", "blue_rook.png", "blue_knight.png", "blue_pawn.png"};
+    private final ArrayList<Piece> pieces = new ArrayList<>();
+    private final JButton[][] board = new JButton[ROWS][COLS];
+    private int turn = 0;
+
+    public TalabiaChess() {
+        setTitle("Talabia Chess");
+        setSize(BOARD_WIDTH, BOARD_HEIGHT);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(false);
+        setLocationRelativeTo(null);
+
+        JPanel panel = new JPanel(new GridLayout(ROWS, COLS));
+        for (int row = 0; row < ROWS; row++) {
+            for (int col = 0; col < COLS; col++) {
+                JButton button = new JButton();
+                button.setPreferredSize(new Dimension(SQUARE_SIZE, SQUARE_SIZE));
+                button.addActionListener(this);
+                board[row][col] = button;
+                panel.add(button);
+            }
+        }
+        add(panel);
+
+        initializePieces();
+        updateBoard();
+        setVisible(true);
+    }
+
+    private void initializePieces() {
+        for (int i = 0; i < PIECE_NAMES.length; i++) {
+            for (int j = 0; j < PIECE_COLORS.length; j++) {
+                Piece piece = new Piece(PIECE_NAMES[i], PIECE_COLORS[j], PIECE_IMAGES[(i * 2) + j]);
+                pieces.add(piece);
+            }
+        }
+    }
+
+    private void updateBoard() {
+        for (int row = 0; row < ROWS; row++) {
+            for (int col = 0; col < COLS; col++) {
+                board[row][col].setIcon(null);
+            }
+        }
+        for (Piece piece : pieces) {
+            int row = piece.getRow();
+            int col = piece.getCol();
+            ImageIcon icon = new ImageIcon(getClass().getResource("/" + piece.getImage()));
+            board[row][col].setIcon(icon);
+        }
+    }
+
+    private void movePiece(int row, int col) {
+        Piece piece = getPiece(row, col);
+        if (piece == null) {
+            return;
+        }
+        if (piece.getColor().equals(PIECE_COLORS[turn])) {
+            piece.move();
+            if (turn == 0 && piece.getName().equals("Pawn") && piece.getRow() == 0) {
+                piece.setName("Rook");
+                piece.setImage(PIECE_IMAGES[1]);
+            } else if (turn == 1 && piece.getName().equals("Pawn") && piece.getRow() == ROWS - 1) {
+                piece.setName("Rook");
+                piece.setImage(PIECE_IMAGES[5]);
+            }
+            if (turn == 1 && piece.getName().equals("Bishop")) {
+                piece.setName("Rook");
+                piece.setImage(PIECE_IMAGES[4]);
+            } else if (turn == 1 && piece.getName().equals("Rook")) {
+                piece.setName("Bishop");
+                piece.setImage(PIECE_IMAGES[6]);
+            } else if (turn == 0 && piece.getName().equals("Bishop")) {
+                piece.setName("Rook");
+                piece.setImage(PIECE_IMAGES[2]);
+            } else if (turn == 0 && piece.getName().equals("Rook")) {
+                piece.setName("Bishop");
+                piece.setImage(PIECE_IMAGES[0]);
+            }
+            turn = (turn + 1) % 2;
+            updateBoard();
+        }
+    }
+
+    private Piece getPiece(int row, int col) {
+        for (Piece piece : pieces) {
+            if (piece.getRow() == row && piece.getCol() == col) {
+                return piece;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JButton button = (JButton) e.getSource();
+        int row = -1;
+        int col = -1;
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                if (board[i][j] == button) {
+                    row = i;
+                    col = j;
+                    break;
+                }
+            }
+        }
+        movePiece(row, col);
+    }
+
+    private static class Piece {
+        private String name;
+        private String color;
+        private String image;
+        private int row;
+        private int col;
+    
+        public Piece(String name, String color, String image) {
+            this.name = name;
+            this.color = color;
+            this.image = image;
+            if (color.equals("Yellow")) {
+                row = 0;
+            } else {
+                row = ROWS - 1;
+            }
+            if (name.equals("King")) {
+                col = 3;
+            } else if (name.equals("Rook")) {
+                if (image.equals(PIECE_IMAGES[1]) || image.equals(PIECE_IMAGES[5])) {
+                    col = 0;
+                } else {
+                    col = 5;
+                }
+            } else if (name.equals("Knight")) {
+                if (image.equals(PIECE_IMAGES[2]) || image.equals(PIECE_IMAGES[6])) {
+                    col = 1;
+                } else {
+                    col = 4;
+                }
+            } else {
+                if (image.equals(PIECE_IMAGES[3]) || image.equals(PIECE_IMAGES[7])) {
+                    col = 2;
+                } else {
+                    col = 3;
+                }
+            }
+        }
+
+        public void move() {
+            int newRow;
+            if (color.equals("Yellow")) {
+                newRow = row + 1;
+            } else {
+                newRow = row - 1;
+            }
+            if (newRow < 0 || newRow >= ROWS) {
+                return;
+            }
+            int newCol = -1;
+            for (int i = -1; i <= 1; i++) {
+                if (col + i < 0 || col + i >= COLS) {
+                    continue;
+                }
+                if (board[newRow][col + i].getIcon() == null) {
+                    newCol = col + i;
+                    break;
+                }
+            }
+            if (newCol == -1) {
+                return;
+            }
+            row = newRow;
+            col = newCol;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getColor() {
+            return color;
+        }
+
+        public void setColor(String color) {
+            this.color = color;
+        }
+
+        public String getImage() {
+            return image;
+        }
+
+        public void setImage(String image) {
+            this.image = image;
+        }
+
+        public int getRow() {
+            return row;
+        }
+
+        public void setRow(int row) {
+            this.row = row;
+        }
+
+        public int getCol() {
+            return col;
+        }
+
+        public void setCol(int col) {
+            this.col = col;
+        }
+    }
+
+    public static void main(String[] args) {
+        new TalabiaChess();
+    }
+}
