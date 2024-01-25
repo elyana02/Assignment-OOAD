@@ -1,5 +1,3 @@
-//this is a test for commits
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -44,8 +42,8 @@ public class ChessGame extends JFrame {
         // Add plus pieces in the four corners
         boardButtons[0][0].setText("Pl1"); // Player 1 plus pieces
         boardButtons[0][6].setText("Pl1"); // Player 1 plus pieces
-        boardButtons[5][0].setText("Pl1"); // Player 2 plus pieces
-        boardButtons[5][6].setText("Pl1"); // Player 2 plus pieces
+        boardButtons[5][0].setText("Pl2"); // Player 2 plus pieces
+        boardButtons[5][6].setText("Pl2"); // Player 2 plus pieces
 
         // Add time pieces on both sides of kings
         boardButtons[0][2].setText("T1"); // Player 1 time pieces
