@@ -17,11 +17,13 @@ import javax.swing.SwingUtilities;
 public class TalabiaGame extends JFrame {
     private JButton[][] boardButtons;
     private int[][] directions;
+    private int currentPlayer;
 
     public TalabiaGame() {
         initializeBoard();
         setupGUI();
         setupMenuBar();
+        currentPlayer = 1;
     }
 
     private void setupMenuBar() {
@@ -59,20 +61,20 @@ public class TalabiaGame extends JFrame {
     }
 
     private void saveProgress() {
-        // Put save and load punya code here 
-        // add txt here 
+        // Put save and load punya code here
+        // add txt here
         JOptionPane.showMessageDialog(this, "Game progress saved!", "Save Progress", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void exitGame() {
-        int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to exit the game?", "Exit Game", JOptionPane.YES_NO_OPTION);
+        int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to exit the game?", "Exit Game",
+                JOptionPane.YES_NO_OPTION);
         if (result == JOptionPane.YES_OPTION) {
-            // add save logic here if you want lah 
+            // add save logic here if you want lah
             System.exit(0);
         }
     }
 
-    
     private void initializeBoard() {
         boardButtons = new JButton[6][7];
         directions = new int[6][7];
@@ -187,7 +189,7 @@ public class TalabiaGame extends JFrame {
             boardButtons[row][col].setIcon(icon);
             boardButtons[row][col].setActionCommand(piece); // Set piece information as action command
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             System.out.println("Image Error");
         }
     }
@@ -205,120 +207,152 @@ public class TalabiaGame extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            //JButton clickedButton = (JButton) e.getSource();
-            //String pieceName = clickedButton.getActionCommand();
+            // JButton clickedButton = (JButton) e.getSource();
+            // String pieceName = clickedButton.getActionCommand();
 
-            // Check if the clicked button has a point piece
-            if(boardButtons[row][col].getActionCommand().equals("P1") || boardButtons[row][col].getActionCommand().equals("P2")) {
-                // Check if the piece can move 1 or 2 steps forward
-                if (isValidMove(row + direction, col) || isValidMove(row + 2 * direction, col)) {
-                    // Instead of automatically moving the piece, display a dialog box with the possible moves
-                    Object[] options = {"Move 1 box", "Move 2 boxes"};
-                    int n = JOptionPane.showOptionDialog(null,
-                            "Choose a move",
-                            "Multiple valid moves",
-                            JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE,
-                            null,
-                            options,
-                            options[0]);
+            // Check if it's the correct player's turn
+            if (isValidPlayerMove(boardButtons[row][col].getActionCommand())) {
+                // Check if the clicked button has a point piece
+                if (boardButtons[row][col].getActionCommand().equals("P1")
+                        || boardButtons[row][col].getActionCommand().equals("P2")) {
+                    // Check if the piece can move 1 or 2 steps forward
+                    if (isValidMove(row + direction, col) || isValidMove(row + 2 * direction, col)) {
+                        // Instead of automatically moving the piece, display a dialog box with the
+                        // possible moves
+                        Object[] options = { "Move 1 box", "Move 2 boxes" };
+                        int n = JOptionPane.showOptionDialog(null,
+                                "Choose a move",
+                                "Multiple valid moves",
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE,
+                                null,
+                                options,
+                                options[0]);
 
-                    // Move the piece based on the player's choice
-                    if (n == 0) {
-                        movePiece(row, col, row + direction, col);
-                    } else if (n == 1) {
-                        movePiece(row, col, row + 2 * direction, col);
-                    }
+                        // Move the piece based on the player's choice
+                        if (n == 0) {
+                            movePiece(row, col, row + direction, col);
+                        } else if (n == 1) {
+                            movePiece(row, col, row + 2 * direction, col);
+                        }
 
-                    // If the piece reached the end of the board, change its direction
-                    if (row + direction == 0 || row + direction == 5) {
-                        direction *= -1;
-                    }
-                }
-            }
-            // Check if the clicked button has an hourglass piece
-            else if (boardButtons[row][col].getActionCommand().equals("H1") || boardButtons[row][col].getActionCommand().equals("H2")) {
-                // Check all possible L-shaped moves
-                for (int[] move : new int[][]{{-2, -1}, {-2, 1}, {-1, -2}, {-1, 2}, {1, -2}, {1, 2}, {2, -1}, {2, 1}}) {
-                    int newRow = row + move[0];
-                    int newCol = col + move[1];
-                    if (isValidMove(newRow, newCol)) {
-                        // Move the piece
-                        movePiece(row, col, newRow, newCol);
-                        break;
+                        // If the piece reached the end of the board, change its direction
+                        if (row + direction == 0 || row + direction == 5) {
+                            direction *= -1;
+                        }
                     }
                 }
-            }
-            // Check if the clicked button has a time piece
-            else if (boardButtons[row][col].getActionCommand().equals("T1") || boardButtons[row][col].getActionCommand().equals("T2")) {
-                // Check all possible diagonal moves
-                for (int dRow = -1; dRow <= 1; dRow += 2) {
-                    for (int dCol = -1; dCol <= 1; dCol += 2) {
+                // Check if the clicked button has an hourglass piece
+                else if (boardButtons[row][col].getActionCommand().equals("H1")
+                        || boardButtons[row][col].getActionCommand().equals("H2")) {
+                    // Check all possible L-shaped moves
+                    for (int[] move : new int[][] { { -2, -1 }, { -2, 1 }, { -1, -2 }, { -1, 2 }, { 1, -2 }, { 1, 2 },
+                            { 2, -1 }, { 2, 1 } }) {
+                        int newRow = row + move[0];
+                        int newCol = col + move[1];
+                        if (isValidMove(newRow, newCol)) {
+                            // Move the piece
+                            movePiece(row, col, newRow, newCol);
+                            break;
+                        }
+                    }
+                }
+                // Check if the clicked button has a time piece
+                else if (boardButtons[row][col].getActionCommand().equals("T1")
+                        || boardButtons[row][col].getActionCommand().equals("T2")) {
+                    // Check all possible diagonal moves
+                    for (int dRow = -1; dRow <= 1; dRow += 2) {
+                        for (int dCol = -1; dCol <= 1; dCol += 2) {
+                            int dist;
+                            for (dist = 1; dist < 6; dist++) {
+                                int newRow = row + dRow * dist;
+                                int newCol = col + dCol * dist;
+                                if (!isValidMove(newRow, newCol)) {
+                                    // If the piece cannot move because another piece is in the way, stop checking
+                                    // in this direction
+                                    break;
+                                }
+                            }
+                            // Move the piece to the furthest valid position
+                            if (dist > 1) {
+                                movePiece(row, col, row + dRow * (dist - 1), col + dCol * (dist - 1));
+                            }
+                        }
+                    }
+                }
+                // Check if the clicked button has a plus piece
+                else if (boardButtons[row][col].getActionCommand().equals("Pl1")
+                        || boardButtons[row][col].getActionCommand().equals("Pl2")) {
+                    // Check all possible horizontal and vertical moves
+                    for (int[] move : new int[][] { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } }) {
                         int dist;
                         for (dist = 1; dist < 6; dist++) {
-                            int newRow = row + dRow * dist;
-                            int newCol = col + dCol * dist;
+                            int newRow = row + move[0] * dist;
+                            int newCol = col + move[1] * dist;
                             if (!isValidMove(newRow, newCol)) {
-                                // If the piece cannot move because another piece is in the way, stop checking in this direction
+                                // If the piece cannot move because another piece is in the way, stop checking
+                                // in this direction
                                 break;
                             }
                         }
                         // Move the piece to the furthest valid position
                         if (dist > 1) {
-                            movePiece(row, col, row + dRow * (dist - 1), col + dCol * (dist - 1));
+                            movePiece(row, col, row + move[0] * (dist - 1), col + move[1] * (dist - 1));
                         }
                     }
                 }
-            }
-            // Check if the clicked button has a plus piece
-            else if (boardButtons[row][col].getActionCommand().equals("Pl1") || boardButtons[row][col].getActionCommand().equals("Pl2")) {
-                // Check all possible horizontal and vertical moves
-                for (int[] move : new int[][]{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}) {
-                    int dist;
-                    for (dist = 1; dist < 6; dist++) {
-                        int newRow = row + move[0] * dist;
-                        int newCol = col + move[1] * dist;
-                        if (!isValidMove(newRow, newCol)) {
-                            // If the piece cannot move because another piece is in the way, stop checking in this direction
+                // Check if the clicked button has a sun piece
+                else if (boardButtons[row][col].getActionCommand().equals("S1")
+                        || boardButtons[row][col].getActionCommand().equals("S2")) {
+                    // Check all possible moves in any direction
+                    for (int[] move : new int[][] { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 }, { -1, -1 }, { -1, 1 },
+                            { 1, -1 }, { 1, 1 } }) {
+                        int newRow = row + move[0];
+                        int newCol = col + move[1];
+                        if (isValidMove(newRow, newCol)) {
+                            // Move the piece
+                            movePiece(row, col, newRow, newCol);
                             break;
                         }
                     }
-                    // Move the piece to the furthest valid position
-                    if (dist > 1) {
-                        movePiece(row, col, row + move[0] * (dist - 1), col + move[1] * (dist - 1));
-                    }
                 }
+
+                // Switch turn after a valid move
+                currentPlayer = 3 - currentPlayer;
+            } else {
+                JOptionPane.showMessageDialog(null, "It's not your turn!", "Invalid Move", JOptionPane.ERROR_MESSAGE);
             }
-            // Check if the clicked button has a sun piece
-            else if (boardButtons[row][col].getActionCommand().equals("S1") || boardButtons[row][col].getActionCommand().equals("S2")) {
-                // Check all possible moves in any direction
-                for (int[] move : new int[][]{{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}}) {
-                    int newRow = row + move[0];
-                    int newCol = col + move[1];
-                    if (isValidMove(newRow, newCol)) {
-                        // Move the piece
-                        movePiece(row, col, newRow, newCol);
-                        break;
-                    }
-                }
+        }
+
+        private boolean isValidPlayerMove(String piece) {
+            // Check if the piece belongs to the current player
+            if ((currentPlayer == 1 && (piece.equals("P1") || piece.equals("H1") || piece.equals("T1")
+                    || piece.equals("Pl1") || piece.equals("S1")))
+                    || (currentPlayer == 2 && (piece.equals("P2") || piece.equals("H2") || piece.equals("T2")
+                            || piece.equals("Pl2") || piece.equals("S2")))) {
+                return true;
             }
+            return false;
         }
 
         private boolean isValidMove(int newRow, int newCol) {
             // Check if the new position is within the board and is empty
-            return newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7 && boardButtons[newRow][newCol].getActionCommand().equals("");
+            return newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7
+                    && boardButtons[newRow][newCol].getActionCommand().equals("");
         }
 
         private void movePiece(int oldRow, int oldCol, int newRow, int newCol) {
             // Check if the game is over
-            if (boardButtons[newRow][newCol].getActionCommand().equals("S1") || boardButtons[newRow][newCol].getActionCommand().equals("S2")) {
+            if (boardButtons[newRow][newCol].getActionCommand().equals("S1")
+                    || boardButtons[newRow][newCol].getActionCommand().equals("S2")) {
                 System.out.println("Game Over! The sun has been captured.");
                 System.exit(0);
             }
 
             // Check if the destination square contains an opposing player's piece
             if (!boardButtons[newRow][newCol].getActionCommand().isEmpty() &&
-            boardButtons[newRow][newCol].getActionCommand().charAt(1) != boardButtons[oldRow][oldCol].getActionCommand().charAt(1)) {
+                    boardButtons[newRow][newCol].getActionCommand().charAt(1) != boardButtons[oldRow][oldCol]
+                            .getActionCommand().charAt(1)) {
 
                 // Capture the piece
                 boardButtons[newRow][newCol].setIcon(boardButtons[oldRow][oldCol].getIcon());
