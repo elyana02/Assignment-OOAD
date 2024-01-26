@@ -206,15 +206,14 @@ public class TalabiaGame extends JFrame {
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
-            // JButton clickedButton = (JButton) e.getSource();
-            // String pieceName = clickedButton.getActionCommand();
-
+        public void actionPerformed(ActionEvent e) 
+        {
             // Check if it's the correct player's turn
-            if (isValidPlayerMove(boardButtons[row][col].getActionCommand())) {
+            if (isValidPlayerMove(boardButtons[row][col].getActionCommand())) 
+            {
                 // Check if the clicked button has a point piece
                 if (boardButtons[row][col].getActionCommand().equals("P1")
-                        || boardButtons[row][col].getActionCommand().equals("P2")) {
+                    || boardButtons[row][col].getActionCommand().equals("P2")) {
                     // Check if the piece can move 1 or 2 steps forward
                     if (isValidMove(row + direction, col) || isValidMove(row + 2 * direction, col)) {
                         // Instead of automatically moving the piece, display a dialog box with the
@@ -325,15 +324,17 @@ public class TalabiaGame extends JFrame {
         }
 
         private boolean isValidPlayerMove(String piece) {
-            // Check if the piece belongs to the current player
-            if ((currentPlayer == 1 && (piece.equals("P1") || piece.equals("H1") || piece.equals("T1")
+            // Check if the piece is empty or belongs to the current player
+            if (piece.isEmpty() || ((currentPlayer == 1 && (piece.equals("P1") || piece.equals("H1") || piece.equals("T1")
                     || piece.equals("Pl1") || piece.equals("S1")))
                     || (currentPlayer == 2 && (piece.equals("P2") || piece.equals("H2") || piece.equals("T2")
-                            || piece.equals("Pl2") || piece.equals("S2")))) {
+                    || piece.equals("Pl2") || piece.equals("S2"))))) 
+            {
                 return true;
             }
             return false;
         }
+        
 
         private boolean isValidMove(int newRow, int newCol) {
             // Check if the new position is within the board and is empty
