@@ -409,6 +409,6 @@ public class V0 extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new TalabiaGame());
+        SwingUtilities.invokeLater(() -> new V0());
     }
 }
