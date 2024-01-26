@@ -206,19 +206,18 @@ public class TalabiaGame extends JFrame {
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) 
-        {
+        public void actionPerformed(ActionEvent e) {
             // Check if it's the correct player's turn
-            if (isValidPlayerMove(boardButtons[row][col].getActionCommand())) 
-            {
+            if (isValidPlayerMove(boardButtons[row][col].getActionCommand())) {
                 // Check if the clicked button has a point piece
                 if (boardButtons[row][col].getActionCommand().equals("P1")
-                    || boardButtons[row][col].getActionCommand().equals("P2")) {
+                        || boardButtons[row][col].getActionCommand().equals("P2")) {
                     // Check if the piece can move 1 or 2 steps forward
                     if (isValidMove(row + direction, col) || isValidMove(row + 2 * direction, col)) {
                         // Instead of automatically moving the piece, display a dialog box with the
                         // possible moves
                         Object[] options = { "Move 1 box", "Move 2 boxes" };
+                        
                         int n = JOptionPane.showOptionDialog(null,
                                 "Choose a move",
                                 "Multiple valid moves",
@@ -227,6 +226,13 @@ public class TalabiaGame extends JFrame {
                                 null,
                                 options,
                                 options[0]);
+
+                        // Check the player's choice
+                        if (n == JOptionPane.CLOSED_OPTION) {
+                            // Player closed the dialog without choosing, you can handle this case here
+                            JOptionPane.showMessageDialog(null, "Please choose a move.", "Move Canceled", JOptionPane.INFORMATION_MESSAGE);
+                            return;  // Return without switching the turn
+                        }
 
                         // Move the piece based on the player's choice
                         if (n == 0) {
@@ -325,21 +331,26 @@ public class TalabiaGame extends JFrame {
 
         private boolean isValidPlayerMove(String piece) {
             // Check if the piece is empty or belongs to the current player
-            if (piece.isEmpty() || ((currentPlayer == 1 && (piece.equals("P1") || piece.equals("H1") || piece.equals("T1")
-                    || piece.equals("Pl1") || piece.equals("S1")))
-                    || (currentPlayer == 2 && (piece.equals("P2") || piece.equals("H2") || piece.equals("T2")
-                    || piece.equals("Pl2") || piece.equals("S2"))))) 
-            {
+            if (piece.isEmpty()
+                    || ((currentPlayer == 1 && (piece.equals("P1") || piece.equals("H1") || piece.equals("T1")
+                            || piece.equals("Pl1") || piece.equals("S1")))
+                            || (currentPlayer == 2 && (piece.equals("P2") || piece.equals("H2") || piece.equals("T2")
+                                    || piece.equals("Pl2") || piece.equals("S2"))))) {
                 return true;
             }
             return false;
         }
-        
 
         private boolean isValidMove(int newRow, int newCol) {
-            // Check if the new position is within the board and is empty
-            return newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7
-                    && boardButtons[newRow][newCol].getActionCommand().equals("");
+            // Check if the new position is within the board8/
+            if (newRow < 0 || newRow >= 6 || newCol < 0 || newCol >= 7) {
+                return false;
+            }
+
+            // Check if the new position is empty or contains a piece belonging to the
+            // current player
+            String pieceAtNewPosition = boardButtons[newRow][newCol].getActionCommand();
+            return pieceAtNewPosition.isEmpty() || isValidPlayerMove(pieceAtNewPosition);
         }
 
         private void movePiece(int oldRow, int oldCol, int newRow, int newCol) {
