@@ -18,6 +18,9 @@ public class V0 extends JFrame {
     private JButton[][] boardButtons;
     private int[][] directions;
     private int currentPlayer;
+    private int totalMoves;
+    private int yellowTurns;
+    private int blueTurns;
 
     public V0() {
         initializeBoard();
@@ -248,6 +251,13 @@ public class V0 extends JFrame {
                                 options,
                                 options[0]);
 
+                        // Check the player's choice
+                        if (n == JOptionPane.CLOSED_OPTION) {
+                            // Player closed the dialog without choosing, you can handle this case here
+                            JOptionPane.showMessageDialog(null, "Please choose a move.", "Move Canceled", JOptionPane.INFORMATION_MESSAGE);
+                            return;  // Return without switching the turn
+                        }
+
                         // Move the piece based on the player's choice
                         if (n == 0) {
                             movePiece(row, col, row + direction, col);
@@ -339,22 +349,26 @@ public class V0 extends JFrame {
                 // Switch turn after a valid move
                 currentPlayer = 3 - currentPlayer;
 
-                // Increment turn count
-                turnCount++;
+                // Increment turns for the current player
+                if (currentPlayer == 1) {
+                    yellowTurns++;
+                } else {
+                    blueTurns++;
+                }
 
-                // Check if two turns have passed
-                if (turnCount == 2) {
+                // Check if both players have taken two turns each
+                if (yellowTurns == 2 && blueTurns == 2) {
+                    // Reset turn counters
+                    yellowTurns = 0;
+                    blueTurns = 0;
+
                     // Change time pieces to plus pieces and vice versa
                     changeTimeAndPlusPieces();
-                    // Reset turn count
-                    turnCount = 0;
                 }
 
             } else {
                 JOptionPane.showMessageDialog(null, "It's not your turn!", "Invalid Move", JOptionPane.ERROR_MESSAGE);
             }
-
-            
         }
 
         private boolean isValidPlayerMove(String piece) {
