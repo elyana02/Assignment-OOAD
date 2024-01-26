@@ -1,0 +1,23 @@
+#BlueJ class context
+comment0.target=TalabiaGame
+comment1.params=
+comment1.target=TalabiaGame()
+comment10.params=args
+comment10.target=void\ main(java.lang.String[])
+comment2.params=
+comment2.target=void\ setupMenuBar()
+comment3.params=e
+comment3.target=void\ actionPerformed(java.awt.event.ActionEvent)
+comment4.params=e
+comment4.target=void\ actionPerformed(java.awt.event.ActionEvent)
+comment5.params=
+comment5.target=void\ saveProgress()
+comment6.params=
+comment6.target=void\ exitGame()
+comment7.params=
+comment7.target=void\ initializeBoard()
+comment8.params=
+comment8.target=void\ setupGUI()
+comment9.params=piece\ row\ col
+comment9.target=void\ setPieceIcon(java.lang.String,\ int,\ int)
+numComments=11
