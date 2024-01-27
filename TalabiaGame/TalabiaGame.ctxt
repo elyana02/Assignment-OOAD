@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=TalabiaGame
+comment1.params=board\ currentPlayer
+comment1.target=TalabiaGame(Board,\ Player)
+comment2.params=piece
+comment2.target=boolean\ isValidPlayerMove(java.lang.String)
+comment3.params=
+comment3.target=Board\ getBoard()
+numComments=4

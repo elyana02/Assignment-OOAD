@@ -1,0 +1,19 @@
+#BlueJ class context
+comment0.target=Board
+comment1.params=
+comment1.target=Board()
+comment2.params=
+comment2.target=void\ initializeBoard()
+comment3.params=
+comment3.target=javax.swing.JButton[][]\ getBoardButtons()
+comment4.params=piece\ row\ col
+comment4.target=void\ setPieceIcon(java.lang.String,\ int,\ int)
+comment5.params=row\ col
+comment5.target=int\ getDirection(int,\ int)
+comment6.params=row\ col
+comment6.target=void\ reverseDirection(int,\ int)
+comment7.params=row\ col
+comment7.target=java.lang.String\ getPieceAt(int,\ int)
+comment8.params=oldRow\ oldCol\ newRow\ newCol
+comment8.target=void\ movePiece(int,\ int,\ int,\ int)
+numComments=9
