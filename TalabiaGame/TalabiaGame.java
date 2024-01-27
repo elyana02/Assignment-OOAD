@@ -58,10 +58,6 @@ public class TalabiaGame
             // Check if it's the correct player's turn
             if(isValidPlayerMove(board.getPieceAt(row, col))) 
             {
-                //debug
-                System.out.println("player:" + currentPlayer.getPlayerNumber());
-                System.out.println("Old Position: [" + row + ", " + col + "]");
-
                 // Check if the clicked button has a point piece
                 if (board.getPieceAt(row, col).equals("P1")
                     || board.getPieceAt(row, col).equals("P2")) {
@@ -84,8 +80,6 @@ public class TalabiaGame
                         return;  // Return without switching the turn
                     }
 
-                    //debug
-                            System.out.println("Move choice: " + n);
                      
                     // Move the piece based on the player's choice
                     if (n == 0) {       //1 box
@@ -108,8 +102,6 @@ public class TalabiaGame
                         if (row + direction == 0 || row + direction == 5) {
                             direction *= -1;
                         }
-                        // Print new position after the move
-                        System.out.println("New Position: [" + (row + direction) + ", " + col + "]");
                     }
                 
                 // Check if the clicked button has an hourglass piece
@@ -221,20 +213,16 @@ public class TalabiaGame
                     && board.getPieceAt(newRow, newCol).isEmpty();
         }
 
-        private boolean isValidPointMove(int newRow, int newCol) {
-            // Check if the new position is within the board
-            if (newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7) {
-                // Check if the destination position is empty
-                if (board.getPieceAt(newRow, newCol).isEmpty()) {
-                    // Check if the piece is moving in the correct direction
-                    if (direction == 1 && newRow > row) {
-                        return true;
-                    } else if (direction == -1 && newRow < row) {
-                        return true;
+        private boolean isValidPointMove(int newRow, int newCol) 
+        {
+            // Check if the new position is within the board and is empty
+            if(newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7
+                    && board.getPieceAt(newRow, newCol).isEmpty()) {
+                     return true;   
                     }
-                }
+            else {
+                return false;
             }
-            return false;
         }
       
         private void changeTimeAndPlusPieces() 
