@@ -1,23 +1,25 @@
+import javax.swing.JOptionPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JOptionPane;
-
-public class TalabiaGame {
+public class TalabiaGame
+{
     public Board board;
     private Player currentPlayer;
     private int yellowTurns;
     private int blueTurns;
-
-    public TalabiaGame(Board board, Player currentPlayer) {
+    
+    public TalabiaGame(Board board, Player currentPlayer) 
+    {
         this.board = board;
         this.currentPlayer = currentPlayer;
         this.yellowTurns = 0;
         this.blueTurns = 0;
         this.board.initializeBoard();
     }
-
-    private boolean isValidPlayerMove(String piece) {
+    
+    private boolean isValidPlayerMove(String piece) 
+    {
         // Check if the piece belongs to the current player
         if ((currentPlayer.getPlayerNumber() == 1 && (piece.equals("P1") || piece.equals("H1") || piece.equals("T1")
                 || piece.equals("Pl1") || piece.equals("S1")))
@@ -32,7 +34,9 @@ public class TalabiaGame {
         return board;
     }
 
-    public class ChessButtonListener implements ActionListener {
+    
+    public class ChessButtonListener implements ActionListener
+    {
         private int row;
         private int col;
         private int direction;
@@ -40,46 +44,69 @@ public class TalabiaGame {
         public ChessButtonListener(int row, int col) {
             this.row = row;
             this.col = col;
-            this.direction = (board != null) ? board.getDirection(row, col) : 0;
+            this.direction = (board != null) ? board.getDirection(row,col) : 0;
         }
-
+        
         @Override
         public void actionPerformed(ActionEvent e) {
+
+            // Check if the clicked button is empty
+            if (board.getPieceAt(row, col).isEmpty()) {
+                return;
+            }
+
             // Check if it's the correct player's turn
-            if (isValidPlayerMove(board.getPieceAt(row, col))) {
+            if(isValidPlayerMove(board.getPieceAt(row, col))) 
+            {
                 // Check if the clicked button has a point piece
-                if (board.getPieceAt(row, col).equals("P1") || board.getPieceAt(row, col).equals("P2")) {
-                    // Check if the piece can move 1 or 2 steps forward
-                    if (isValidMove(row + direction, col) || isValidMove(row + 2 * direction, col)) {
-                        // Instead of automatically moving the piece, display a dialog box with the
-                        // possible moves
-                        Object[] options = { "Move 1 box", "Move 2 boxes" };
-                        int n = JOptionPane.showOptionDialog(null, "Choose a move", "Multiple valid moves",
-                                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                if (board.getPieceAt(row, col).equals("P1")
+                    || board.getPieceAt(row, col).equals("P2")) {
+                    
+                    // Instead of automatically moving the piece, display a dialog box with the possible moves
+                    Object[] options = { "Move 1 box", "Move 2 boxes" };
+                    int n = JOptionPane.showOptionDialog(null,
+                            "Choose a move",
+                            "Multiple valid moves",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            options,
+                            options[0]);
 
-                        // Check the player's choice
-                        if (n == JOptionPane.CLOSED_OPTION) {
-                            // Player closed the dialog without choosing, you can handle this case here
-                            JOptionPane.showMessageDialog(null, "Please choose a move.", "Move Canceled",
-                                    JOptionPane.INFORMATION_MESSAGE);
-                            return; // Return without switching the turn
-                        }
+                    // Check the player's choice
+                    if (n == JOptionPane.CLOSED_OPTION) {
+                        // Player closed the dialog without choosing, you can handle this case here
+                        JOptionPane.showMessageDialog(null, "Please choose a move.", "Move Canceled", JOptionPane.INFORMATION_MESSAGE);
+                        return;  // Return without switching the turn
+                    }
 
-                        // Move the piece based on the player's choice
-                        if (n == 0) {
-                            board.movePiece(row, col, row + direction, col);
-                        } else if (n == 1) {
+                     
+                    // Move the piece based on the player's choice
+                    if (n == 0) {       //1 box
+                        board.movePiece(row, col, row + direction, col);
+                        updatePieceLabel(row, col, row + direction, col);
+                    }
+                    else if(n == 1){    //2 boxes
+                        // Check if the move is valid using isValidPointMove
+                        if (isValidPointMove(row +direction, col)) {
                             board.movePiece(row, col, row + 2 * direction, col);
+                            updatePieceLabel(row, col, row + direction, col);
                         }
-
-                        // If the piece reached the end of the board, change its direction
+                        else {
+                            JOptionPane.showMessageDialog(null, "Invalid Move: Pieces cannot be skipped.", "Invalid Move", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                    }                          
+                    
+                       // If the piece reached the end of the board, change its direction
                         if (row + direction == 0 || row + direction == 5) {
                             direction *= -1;
                         }
                     }
-                }
+                
                 // Check if the clicked button has an hourglass piece
-                else if (board.getPieceAt(row, col).equals("H1") || board.getPieceAt(row, col).equals("H2")) {
+                else if (board.getPieceAt(row, col).equals("H1")
+                        || board.getPieceAt(row, col).equals("H2")) {
                     // Check all possible L-shaped moves
                     for (int[] move : new int[][] { { -2, -1 }, { -2, 1 }, { -1, -2 }, { -1, 2 }, { 1, -2 }, { 1, 2 },
                             { 2, -1 }, { 2, 1 } }) {
@@ -93,7 +120,8 @@ public class TalabiaGame {
                     }
                 }
                 // Check if the clicked button has a time piece
-                else if (board.getPieceAt(row, col).equals("T1") || board.getPieceAt(row, col).equals("T2")) {
+                else if (board.getPieceAt(row, col).equals("T1")
+                        || board.getPieceAt(row, col).equals("T2")) {
                     // Check all possible diagonal moves
                     for (int dRow = -1; dRow <= 1; dRow += 2) {
                         for (int dCol = -1; dCol <= 1; dCol += 2) {
@@ -115,7 +143,8 @@ public class TalabiaGame {
                     }
                 }
                 // Check if the clicked button has a plus piece
-                else if (board.getPieceAt(row, col).equals("Pl1") || board.getPieceAt(row, col).equals("Pl2")) {
+                else if (board.getPieceAt(row, col).equals("Pl1")
+                        || board.getPieceAt(row, col).equals("Pl2")) {
                     // Check all possible horizontal and vertical moves
                     for (int[] move : new int[][] { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } }) {
                         int dist;
@@ -135,7 +164,8 @@ public class TalabiaGame {
                     }
                 }
                 // Check if the clicked button has a sun piece
-                else if (board.getPieceAt(row, col).equals("S1") || board.getPieceAt(row, col).equals("S2")) {
+                else if (board.getPieceAt(row, col).equals("S1")
+                        || board.getPieceAt(row, col).equals("S2")) {
                     // Check all possible moves in any direction
                     for (int[] move : new int[][] { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 }, { -1, -1 }, { -1, 1 },
                             { 1, -1 }, { 1, 1 } }) {
@@ -173,16 +203,31 @@ public class TalabiaGame {
                     changeTimeAndPlusPieces();
                 }
             } else {
-                JOptionPane.showMessageDialog(null, "It's not your turn!", "Invalid Move", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Invalid Move!", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-
-        private boolean isValidMove(int newRow, int newCol) {
+        
+        private boolean isValidMove(int newRow, int newCol) 
+        {
             // Check if the new position is within the board and is empty
-            return newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7 && board.getPieceAt(newRow, newCol).isEmpty();
+            return newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7
+                    && board.getPieceAt(newRow, newCol).isEmpty();
         }
 
-        private void changeTimeAndPlusPieces() {
+        private boolean isValidPointMove(int newRow, int newCol) 
+        {
+            // Check if the new position is within the board and is empty
+            if(newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7
+                    && board.getPieceAt(newRow, newCol).isEmpty()) {
+                     return true;   
+                    }
+            else {
+                return false;
+            }
+        }
+      
+        private void changeTimeAndPlusPieces() 
+        {
             for (int r = 0; r < 6; r++) {
                 for (int c = 0; c < 7; c++) {
                     String piece = board.getPieceAt(r, c);
@@ -207,6 +252,35 @@ public class TalabiaGame {
                     }
                 }
             }
+        }
+
+        // Helper method to update piece labels after a move
+        private void updatePieceLabel(int oldRow, int oldCol, int newRow, int newCol) {
+            String piece = board.getPieceAt(newRow, newCol);
+            String pieceLabel = "";
+
+            // Determine the piece label based on the piece type
+            switch (piece) {
+                case "P1":
+                    pieceLabel = "P1";
+                    break;
+                case "P2":
+                    pieceLabel = "P2";
+                    break;
+                case "H1":
+                    pieceLabel = "H1";
+                    break;
+                case "H2":
+                    pieceLabel = "H2";
+                    break;
+                // Add cases for other piece types
+            }
+
+            // Set the piece label at the new position
+            board.setPieceIcon(pieceLabel, newRow, newCol);
+
+            // Clear the piece label at the old position
+            board.setPieceIcon("", oldRow, oldCol);
         }
     }
 }
