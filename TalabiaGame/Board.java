@@ -139,7 +139,7 @@ public class Board
         // Check if the game is over
         if (boardButtons[newRow][newCol].getActionCommand().equals("S1")
         || boardButtons[newRow][newCol].getActionCommand().equals("S2")) {
-            System.out.println("Game Over! The sun has been captured.");
+            JOptionPane.showMessageDialog(null, "Game Over! The sun has been captured.", "Game Over", JOptionPane.INFORMATION_MESSAGE);
             System.exit(0);
         }
 
@@ -153,7 +153,7 @@ public class Board
             boardButtons[oldRow][oldCol].setIcon(null);
             boardButtons[newRow][newCol].setActionCommand(boardButtons[oldRow][oldCol].getActionCommand());
             boardButtons[oldRow][oldCol].setActionCommand("");
-            System.out.println("Piece captured!");
+            JOptionPane.showMessageDialog(null, "Piece captured!", "Piece is captured!", JOptionPane.INFORMATION_MESSAGE);
 
         } else {
             // Move the piece from the old position to the new position
