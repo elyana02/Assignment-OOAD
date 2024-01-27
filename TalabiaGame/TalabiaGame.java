@@ -45,9 +45,6 @@ public class TalabiaGame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            // JButton clickedButton = (JButton) e.getSource();
-            // String pieceName = clickedButton.getActionCommand();
-
             // Check if it's the correct player's turn
             if (isValidPlayerMove(board.getPieceAt(row, col))) {
                 // Check if the clicked button has a point piece
