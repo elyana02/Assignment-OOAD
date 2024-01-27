@@ -203,8 +203,7 @@ public class TalabiaGame
                     changeTimeAndPlusPieces();
                 }
             } else {
-                JOptionPane.showMessageDialog(null, "Invalid Move!", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+                JOptionPane.showMessageDialog(null, "It's not your turn!", "Invalid Move", JOptionPane.ERROR_MESSAGE);            }
         }
         
         private boolean isValidMove(int newRow, int newCol) 
