@@ -69,52 +69,51 @@ public class TalabiaGame
                 if (board.getPieceAt(row, col).equals("P1")
                 || board.getPieceAt(row, col).equals("P2")) {
 
-                    // Instead of automatically moving the piece, display a dialog box with the possible moves
-                    Object[] options = { "Move 1 box", "Move 2 boxes" };
-                    int n = JOptionPane.showOptionDialog(null,
-                            "Choose a move",
-                            "Multiple valid moves",
-                            JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE,
-                            null,
-                            options,
-                            options[0]);
+                    // Store valid moves in a list
+                    List<int[]> validMoves = new ArrayList<>();
 
-                    // Check the player's choice
-                    if (n == JOptionPane.CLOSED_OPTION) {
-                        // Player closed the dialog without choosing, you can handle this case here
-                        JOptionPane.showMessageDialog(null, "Please choose a move.", "Move Canceled", JOptionPane.INFORMATION_MESSAGE);
-                        return;  // Return without switching the turn
-                    }
-
-                    System.out.println("Move choice: " + n);
-
-                    // Move the piece based on the player's choice
-                    if (n == 0) {       //1 box
-                        System.out.println("New box piece:" + board.getPieceAt(row + direction, col));
-
-                        if(isValidPointMove(row + direction, col, 0)) {
-                            board.movePiece(row, col, row + direction, col);
-                            //updatePieceLabel(row, col, row + direction, col);
-                        }else {
-                            JOptionPane.showMessageDialog(null, "Invalid Move: Pieces cannot be skipped.", "Invalid Move", JOptionPane.ERROR_MESSAGE);
-                            return;
-                        }  
-
-                    }
-                    else if(n == 1){    //2 boxes
-                        System.out.println("New box piece:" + board.getPieceAt(row + 2 * direction, col));
+                    // Check all possible moves
+                    for (int i = 1; i <= 2; i++) {
+                        int newRow = row + i * direction;
+                        int newCol = col;
 
                         // Check if the move is valid using isValidPointMove
-                        if (isValidPointMove(row + 2 * direction, col, 1)) {
-                            board.movePiece(row, col, row + 2 * direction, col);
-                            //updatePieceLabel(row, col, row + direction, col);
+                        if (isValidPlusMove(row, col, newRow, newCol)) {
+                            validMoves.add(new int[]{newRow, newCol});
                         }
-                        else {
-                            JOptionPane.showMessageDialog(null, "Invalid Move: Pieces cannot be skipped.", "Invalid Move", JOptionPane.ERROR_MESSAGE);
-                            return;
+                    }
+
+                    // If there are valid moves, allow the player to choose
+                    if (!validMoves.isEmpty()) {
+                        Object[] options = new Object[validMoves.size()];
+                        for (int i = 0; i < validMoves.size(); i++) {
+                            options[i] = "Move to " + Arrays.toString(validMoves.get(i));
                         }
-                    }                          
+
+                        int n = JOptionPane.showOptionDialog(null,
+                                "Choose a move",
+                                "Multiple valid moves",
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE,
+                                null,
+                                options,
+                                options[0]);
+
+                        // Check the player's choice
+                        if (n == JOptionPane.CLOSED_OPTION) {
+                            // Player closed the dialog without choosing, you can handle this case here
+                            JOptionPane.showMessageDialog(null, "Please choose a move.", "Move Canceled", JOptionPane.INFORMATION_MESSAGE);
+                            return;  // Return without switching the turn
+                        }
+
+                        // Get the chosen move and move the piece
+                        int[] chosenMove = validMoves.get(n);
+                        board.movePiece(row, col, chosenMove[0], chosenMove[1]);
+                    } else {
+                        // No valid moves
+                        JOptionPane.showMessageDialog(null, "Invalid Move: No valid moves available.", "Invalid Move", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
 
                     // If the piece reached the end of the board, change its direction
                     if (row + direction == 0 || row + direction == 5) {
@@ -174,7 +173,7 @@ public class TalabiaGame
                 else if (board.getPieceAt(row, col).equals("T1") || board.getPieceAt(row, col).equals("T2")) {
                     // Store valid moves in a list
                     List<int[]> validMoves = new ArrayList<>();
-                
+
                     // Check all possible diagonal moves
                     for (int dRow = -1; dRow <= 1; dRow += 2) {
                         for (int dCol = -1; dCol <= 1; dCol += 2) {
@@ -182,30 +181,22 @@ public class TalabiaGame
                             for (dist = 1; dist < 6; dist++) {
                                 int newRow = row + dRow * dist;
                                 int newCol = col + dCol * dist;
-                
-                                // Check if the move is within the board boundaries
-                                if (newRow < 0 || newRow >= 6 || newCol < 0 || newCol >= 7) {
-                                    break;
-                                }
-                
-                                // Add the current position as a valid move
-                                validMoves.add(new int[]{newRow, newCol});
-                
-                                // Check if the destination square is not empty
-                                if (!board.getPieceAt(newRow, newCol).isEmpty()) {
-                                    break;
-                                }
+                                if(isValidTimeMove(row, col, newRow, newCol, dRow, dCol)) {
+                                    // Add the current position as a valid move
+                                    validMoves.add(new int[]{newRow, newCol});
+                                } else
+                                    break;    // Stop checking in this direction if not valid
                             }
                         }
                     }
-                
+
                     // If there are valid moves, allow the player to choose
                     if (!validMoves.isEmpty()) {
                         Object[] options = new Object[validMoves.size()];
                         for (int i = 0; i < validMoves.size(); i++) {
                             options[i] = "Move to " + Arrays.toString(validMoves.get(i));
                         }
-                
+
                         int n = JOptionPane.showOptionDialog(null,
                                 "Choose a move",
                                 "Multiple valid moves",
@@ -214,14 +205,14 @@ public class TalabiaGame
                                 null,
                                 options,
                                 options[0]);
-                
+
                         // Check the player's choice
                         if (n == JOptionPane.CLOSED_OPTION) {
                             // Player closed the dialog without choosing, you can handle this case here
                             JOptionPane.showMessageDialog(null, "Please choose a move.", "Move Canceled", JOptionPane.INFORMATION_MESSAGE);
                             return;  // Return without switching the turn
                         }
-                
+
                         // Get the chosen move and move the piece
                         int[] chosenMove = validMoves.get(n);
                         board.movePiece(row, col, chosenMove[0], chosenMove[1]);
@@ -242,7 +233,7 @@ public class TalabiaGame
                         int newCol = col + move[1];
 
                         // Continue moving in the same direction until reaching the board boundary
-                        while (isValidMove(newRow, newCol)) {
+                        while (isValidPlusMove(row, col, newRow, newCol)) {
                             // Add the current position as a valid move
                             validMoves.add(new int[]{newRow, newCol});
 
@@ -284,31 +275,12 @@ public class TalabiaGame
                         return;
                     }
                 }
-                // Check if the clicked button has a sun piece
-                /*else if (board.getPieceAt(row, col).equals("S1")|| board.getPieceAt(row, col).equals("S2")) 
-                {
-                // Check all possible moves in any direction
-                for (int[] move : new int[][] { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 }, { -1, -1 }, { -1, 1 },{ 1, -1 }, { 1, 1 } }) 
-                {
-                int newRow = row + move[0];
-                int newCol = col + move[1];
-                if (isValidMove(newRow, newCol)) 
-                {
-                // Move the piece
-                board.movePiece(row, col, newRow, newCol);
-                break;
-                } else {
-                JOptionPane.showMessageDialog(null, "No valid moves available.", "Invalid Move", JOptionPane.ERROR_MESSAGE);
-                return;
-                }
-                }
-                }*/
 
                 // Check if the clicked button has a sun piece
                 else if (board.getPieceAt(row, col).equals("S1") || board.getPieceAt(row, col).equals("S2")) {
                     // Store valid moves in a list
                     List<int[]> validMoves = new ArrayList<>();
-                    
+
                     // Check all possible moves in any direction
                     for (int[] move : new int[][]{{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}}) {
                         int newRow = row + move[0];
@@ -391,30 +363,57 @@ public class TalabiaGame
             return false;
         }
 
-        private boolean isValidPointMove(int newRow, int newCol, int n) 
+        private boolean isValidPlusMove(int oldRow, int oldCol, int newRow, int newCol) 
         {
-            int direction = board.getDirection(row,col);
+            // Check if the new position is within the board
+            if (newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7) {
 
-            //check if the new position has opponent piece
-            if(!isValidPlayerMove(board.getPieceAt(newRow, newCol))) {
-                if(n == 0) {
-                    // Check if the new position is within the board
-                    return newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7;
+                // Check if the new position has an opponent piece
+                if(!isValidPlayerMove(board.getPieceAt(newRow, newCol))) {
+
+                    // Check if all boxes between old and new locations are empty
+                    int minRow = Math.min(row, newRow);
+                    int maxRow = Math.max(row, newRow);
+                    for (int i = minRow + 1; i < maxRow; i++) {
+                        if (!board.getPieceAt(i, col).isEmpty()) {
+                            return false;
+                        }
+                    }
+                    return true;
                 }
-                else if(n == 1) {
-                    // Check if the new position is within the board and is empty
-                    if(newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7
-                    && board.getPieceAt(newRow-direction, newCol).isEmpty()) {
-                        return true;   
-                    }
-                    else {
-                        return false;
-                    }
-                } 
             }
             return false;
         }
 
+            private boolean isValidTimeMove(int oldRow, int oldCol, int newRow, int newCol, int dRow, int dCol) {
+            // Check if the new position is within the board
+            if (newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7) {
+
+                // Check if the new position has an opponent piece
+                if (!isValidPlayerMove(board.getPieceAt(newRow, newCol))) {
+
+                    // Check if all boxes between old and new locations are empty
+                    int dist;
+                    for (dist = 1; dist < 6; dist++) {
+                        int checkRow = oldRow + dRow * dist;
+                        int checkCol = oldCol + dCol * dist;
+                        if (checkRow == newRow && checkCol == newCol) {
+                            // Reached the destination without finding an occupied box
+                            return true;
+                        }
+                        if (!board.getPieceAt(checkRow, checkCol).isEmpty()) {
+                            // Found an occupied box between old and new locations
+                            return false;
+                        }
+                    }
+
+                    // If the loop completes without finding an occupied box, the move is valid
+                    return true;
+                }
+            }
+            return false;
+        }
+        
         private boolean isOpponentPiece(int newRow, int newCol) {
             // Check if the piece at the destination position belongs to the opponent
             int opponentPlayerNumber = (currentPlayer.getPlayerNumber() == 1) ? 2 : 1;
