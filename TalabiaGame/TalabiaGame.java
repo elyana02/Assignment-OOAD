@@ -1,6 +1,9 @@
 import javax.swing.JOptionPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class TalabiaGame
 {
@@ -8,7 +11,7 @@ public class TalabiaGame
     private Player currentPlayer;
     private int yellowTurns;
     private int blueTurns;
-    
+
     public TalabiaGame(Board board, Player currentPlayer) 
     {
         this.board = board;
@@ -17,13 +20,13 @@ public class TalabiaGame
         this.blueTurns = 0;
         this.board.initializeBoard();
     }
-    
+
     private boolean isValidPlayerMove(String piece) 
     {
         // Check if the piece belongs to the current player
         if ((currentPlayer.getPlayerNumber() == 1 && (piece.equals("P1") || piece.equals("H1") || piece.equals("T1")
                 || piece.equals("Pl1") || piece.equals("S1")))
-                || (currentPlayer.getPlayerNumber() == 2 && (piece.equals("P2") || piece.equals("H2") || piece.equals("T2")
+        || (currentPlayer.getPlayerNumber() == 2 && (piece.equals("P2") || piece.equals("H2") || piece.equals("T2")
                 || piece.equals("Pl2") || piece.equals("S2")))) {
             return true;
         }
@@ -34,7 +37,6 @@ public class TalabiaGame
         return board;
     }
 
-    
     public class ChessButtonListener implements ActionListener
     {
         private int row;
@@ -46,18 +48,23 @@ public class TalabiaGame
             this.col = col;
             this.direction = (board != null) ? board.getDirection(row,col) : 0;
         }
-        
-        @Override
-        public void actionPerformed(ActionEvent e) {
 
+        @Override
+        public void actionPerformed(ActionEvent e) 
+        {
             // Check if the clicked button is empty
-            if (board.getPieceAt(row, col).isEmpty()) {
+            if (board.getPieceAt(row, col).isEmpty()) 
+            {
                 return;
             }
 
             // Check if it's the correct player's turn
             if(isValidPlayerMove(board.getPieceAt(row, col))) 
             {
+                System.out.println("player:" + currentPlayer.getPlayerNumber());
+                System.out.println("Old Position: [" + row + ", " + col + "]");
+                System.out.println("Player's Piece:" + board.getPieceAt(row, col));
+                
                 // Check if the clicked button has a point piece
                 if (board.getPieceAt(row, col).equals("P1")
                     || board.getPieceAt(row, col).equals("P2")) {
@@ -80,15 +87,26 @@ public class TalabiaGame
                         return;  // Return without switching the turn
                     }
 
+                    System.out.println("Move choice: " + n);
                      
                     // Move the piece based on the player's choice
                     if (n == 0) {       //1 box
-                        board.movePiece(row, col, row + direction, col);
-                        updatePieceLabel(row, col, row + direction, col);
+                        System.out.println("New box piece:" + board.getPieceAt(row + direction, col));
+
+                        if(isValidPointMove(row + direction, col, 0)) {
+                            board.movePiece(row, col, row + direction, col);
+                            updatePieceLabel(row, col, row + direction, col);
+                        }else {
+                            JOptionPane.showMessageDialog(null, "Invalid Move: Pieces cannot be skipped.", "Invalid Move", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }  
+                        
                     }
                     else if(n == 1){    //2 boxes
+                        System.out.println("New box piece:" + board.getPieceAt(row + 2 * direction, col));
+
                         // Check if the move is valid using isValidPointMove
-                        if (isValidPointMove(row +direction, col)) {
+                        if (isValidPointMove(row + 2 * direction, col, 1)) {
                             board.movePiece(row, col, row + 2 * direction, col);
                             updatePieceLabel(row, col, row + direction, col);
                         }
@@ -103,25 +121,57 @@ public class TalabiaGame
                             direction *= -1;
                         }
                     }
-                
+
                 // Check if the clicked button has an hourglass piece
-                else if (board.getPieceAt(row, col).equals("H1")
-                        || board.getPieceAt(row, col).equals("H2")) {
+                else if (board.getPieceAt(row, col).equals("H1") || board.getPieceAt(row, col).equals("H2")) {
+                    // Store valid moves in a list
+                    List<int[]> validMoves = new ArrayList<>();
+                
                     // Check all possible L-shaped moves
-                    for (int[] move : new int[][] { { -2, -1 }, { -2, 1 }, { -1, -2 }, { -1, 2 }, { 1, -2 }, { 1, 2 },
-                            { 2, -1 }, { 2, 1 } }) {
+                    for (int[] move : new int[][]{{-2, -1}, {-2, 1}, {-1, -2}, {-1, 2}, {1, -2}, {1, 2}, {2, -1}, {2, 1}}) {
                         int newRow = row + move[0];
                         int newCol = col + move[1];
                         if (isValidMove(newRow, newCol)) {
-                            // Move the piece
-                            board.movePiece(row, col, newRow, newCol);
-                            break;
+                            validMoves.add(new int[]{newRow, newCol});
                         }
                     }
+                
+                    // If there are valid moves, allow the player to choose
+                    if (!validMoves.isEmpty()) {
+                        Object[] options = new Object[validMoves.size()];
+                        for (int i = 0; i < validMoves.size(); i++) {
+                            options[i] = "Move to " + Arrays.toString(validMoves.get(i));
+                        }
+                
+                        int n = JOptionPane.showOptionDialog(null,
+                                "Choose a move",
+                                "Multiple valid moves",
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE,
+                                null,
+                                options,
+                                options[0]);
+                
+                        // Check the player's choice
+                        if (n == JOptionPane.CLOSED_OPTION) {
+                            // Player closed the dialog without choosing, you can handle this case here
+                            JOptionPane.showMessageDialog(null, "Please choose a move.", "Move Canceled", JOptionPane.INFORMATION_MESSAGE);
+                            return;  // Return without switching the turn
+                        }
+                
+                        // Get the chosen move and move the piece
+                        int[] chosenMove = validMoves.get(n);
+                        board.movePiece(row, col, chosenMove[0], chosenMove[1]);
+                    } else {
+                        // No valid moves
+                        JOptionPane.showMessageDialog(null, "No valid moves available.", "Invalid Move", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
                 }
+
+
                 // Check if the clicked button has a time piece
-                else if (board.getPieceAt(row, col).equals("T1")
-                        || board.getPieceAt(row, col).equals("T2")) {
+                else if (board.getPieceAt(row, col).equals("T1") || board.getPieceAt(row, col).equals("T2")) {
                     // Check all possible diagonal moves
                     for (int dRow = -1; dRow <= 1; dRow += 2) {
                         for (int dCol = -1; dCol <= 1; dCol += 2) {
@@ -129,49 +179,67 @@ public class TalabiaGame
                             for (dist = 1; dist < 6; dist++) {
                                 int newRow = row + dRow * dist;
                                 int newCol = col + dCol * dist;
-                                if (!isValidMove(newRow, newCol)) {
-                                    // If the piece cannot move because another piece is in the way, stop checking
-                                    // in this direction
+            
+                                // Check if the move is within the board boundaries
+                                if (newRow < 0 || newRow >= 6 || newCol < 0 || newCol >= 7) {
                                     break;
                                 }
-                            }
-                            // Move the piece to the furthest valid position
-                            if (dist > 1) {
-                                board.movePiece(row, col, row + dRow * (dist - 1), col + dCol * (dist - 1));
+            
+                                // Check if the destination square is empty
+                                if (!board.getPieceAt(newRow, newCol).isEmpty()) {
+                                    // If the piece belongs to the opponent, capture it
+                                    if (board.getPieceAt(newRow, newCol).charAt(1) != board.getPieceAt(row, col).charAt(1)) {
+                                        board.movePiece(row, col, newRow, newCol);
+                                        break;
+                                    } else {
+                                        // If the square is occupied by the player's own piece, the move is not valid
+                                        JOptionPane.showMessageDialog(null, "Invalid Move: Cannot capture your own piece.", "Invalid Move", JOptionPane.ERROR_MESSAGE);
+                                        return;
+                                    }
+                                }
                             }
                         }
                     }
                 }
                 // Check if the clicked button has a plus piece
-                else if (board.getPieceAt(row, col).equals("Pl1")
-                        || board.getPieceAt(row, col).equals("Pl2")) {
+                else if (board.getPieceAt(row, col).equals("Pl1") || board.getPieceAt(row, col).equals("Pl2")) {
                     // Check all possible horizontal and vertical moves
-                    for (int[] move : new int[][] { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } }) {
+                    for (int[] move : new int[][]{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}) {
                         int dist;
                         for (dist = 1; dist < 6; dist++) {
                             int newRow = row + move[0] * dist;
                             int newCol = col + move[1] * dist;
-                            if (!isValidMove(newRow, newCol)) {
-                                // If the piece cannot move because another piece is in the way, stop checking
-                                // in this direction
+            
+                            // Check if the move is within the board boundaries
+                            if (newRow < 0 || newRow >= 6 || newCol < 0 || newCol >= 7) {
                                 break;
                             }
-                        }
-                        // Move the piece to the furthest valid position
-                        if (dist > 1) {
-                            board.movePiece(row, col, row + move[0] * (dist - 1), col + move[1] * (dist - 1));
+            
+                            // Check if the destination square is empty
+                            if (!board.getPieceAt(newRow, newCol).isEmpty()) {
+                                // If the piece belongs to the opponent, capture it
+                                if (board.getPieceAt(newRow, newCol).charAt(1) != board.getPieceAt(row, col).charAt(1)) {
+                                    board.movePiece(row, col, newRow, newCol);
+                                    break;
+                                } else {
+                                    // If the square is occupied by the player's own piece, the move is not valid
+                                    JOptionPane.showMessageDialog(null, "Invalid Move: Cannot capture your own piece.", "Invalid Move", JOptionPane.ERROR_MESSAGE);
+                                    return;
+                                }
+                            }
                         }
                     }
                 }
                 // Check if the clicked button has a sun piece
-                else if (board.getPieceAt(row, col).equals("S1")
-                        || board.getPieceAt(row, col).equals("S2")) {
+                else if (board.getPieceAt(row, col).equals("S1")|| board.getPieceAt(row, col).equals("S2")) 
+                {
                     // Check all possible moves in any direction
-                    for (int[] move : new int[][] { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 }, { -1, -1 }, { -1, 1 },
-                            { 1, -1 }, { 1, 1 } }) {
+                    for (int[] move : new int[][] { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 }, { -1, -1 }, { -1, 1 },{ 1, -1 }, { 1, 1 } }) 
+                    {
                         int newRow = row + move[0];
                         int newCol = col + move[1];
-                        if (isValidMove(newRow, newCol)) {
+                        if (isValidMove(newRow, newCol)) 
+                        {
                             // Move the piece
                             board.movePiece(row, col, newRow, newCol);
                             break;
@@ -180,7 +248,8 @@ public class TalabiaGame
                 }
 
                 // Switch turn after a valid move
-                if (currentPlayer.getPlayerNumber() == 1) {
+                if (currentPlayer.getPlayerNumber() == 1) 
+                {
                     currentPlayer = new Player(2);
                 } else {
                     currentPlayer = new Player(1);
@@ -194,7 +263,8 @@ public class TalabiaGame
                 }
 
                 // Check if both players have taken two turns each
-                if (yellowTurns == 2 && blueTurns == 2) {
+                if (yellowTurns == 2 && blueTurns == 2) 
+                {
                     // Reset turn counters
                     yellowTurns = 0;
                     blueTurns = 0;
@@ -202,29 +272,53 @@ public class TalabiaGame
                     // Change time pieces to plus pieces and vice versa
                     changeTimeAndPlusPieces();
                 }
-            } else {
-                JOptionPane.showMessageDialog(null, "It's not your turn!", "Invalid Move", JOptionPane.ERROR_MESSAGE);            }
+            } 
+            else 
+            {
+                JOptionPane.showMessageDialog(null, "It's not your turn!", "Invalid Move", JOptionPane.ERROR_MESSAGE);            
+            }
         }
-        
+
         private boolean isValidMove(int newRow, int newCol) 
         {
             // Check if the new position is within the board and is empty
-            return newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7
-                    && board.getPieceAt(newRow, newCol).isEmpty();
+            return newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7;
+        }
+        
+        private boolean isValidPointMove(int newRow, int newCol, int n) 
+        {
+            int direction = board.getDirection(row,col);
+
+            //check if the new position has opponent piece
+            if(!isValidPlayerMove(board.getPieceAt(newRow, newCol))) {
+                if(n == 0) {
+                    // Check if the new position is within the board
+                    return newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7;
+                }
+                else if(n == 1) {
+                    // Check if the new position is within the board and is empty
+                    if(newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7
+                            && board.getPieceAt(newRow-direction, newCol).isEmpty()) {
+                            return true;   
+                    }
+                    else {
+                        return false;
+                    }
+                } 
+            }
+            return false;
+        }
+        
+        private boolean isOpponentPiece(int newRow, int newCol) {
+            // Check if the piece at the destination position belongs to the opponent
+            int opponentPlayerNumber = (currentPlayer.getPlayerNumber() == 1) ? 2 : 1;
+            return board.getPieceAt(newRow, newCol).startsWith("P" + opponentPlayerNumber) ||
+                    board.getPieceAt(newRow, newCol).startsWith("H" + opponentPlayerNumber) ||
+                    board.getPieceAt(newRow, newCol).startsWith("T" + opponentPlayerNumber) ||
+                    board.getPieceAt(newRow, newCol).startsWith("Pl" + opponentPlayerNumber) ||
+                    board.getPieceAt(newRow, newCol).startsWith("S" + opponentPlayerNumber);
         }
 
-        private boolean isValidPointMove(int newRow, int newCol) 
-        {
-            // Check if the new position is within the board and is empty
-            if(newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7
-                    && board.getPieceAt(newRow, newCol).isEmpty()) {
-                     return true;   
-                    }
-            else {
-                return false;
-            }
-        }
-      
         private void changeTimeAndPlusPieces() 
         {
             for (int r = 0; r < 6; r++) {
@@ -272,7 +366,24 @@ public class TalabiaGame
                 case "H2":
                     pieceLabel = "H2";
                     break;
-                // Add cases for other piece types
+                case "T1":
+                    pieceLabel = "T1";
+                    break;
+                case "T2":
+                    pieceLabel = "T2";
+                    break;
+                case "Pl1":
+                    pieceLabel = "Pl1";
+                    break;
+                case "Pl2":
+                    pieceLabel = "Pl2";
+                    break;
+                case "S1":
+                    pieceLabel = "S1";
+                    break;
+                case "S2":
+                    pieceLabel = "S2";
+                    break;
             }
 
             // Set the piece label at the new position
