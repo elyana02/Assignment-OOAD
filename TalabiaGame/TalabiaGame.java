@@ -193,7 +193,7 @@ public class TalabiaGame
                                         break;
                                     } else {
                                         // If the square is occupied by the player's own piece, the move is not valid
-                                        JOptionPane.showMessageDialog(null, "Invalid Move: Cannot capture your own piece.", "Invalid Move", JOptionPane.ERROR_MESSAGE);
+                                        JOptionPane.showMessageDialog(null, "No valid moves available.", "Invalid Move", JOptionPane.ERROR_MESSAGE);
                                         return;
                                     }
                                 }
@@ -241,6 +241,9 @@ public class TalabiaGame
                             // Move the piece
                             board.movePiece(row, col, newRow, newCol);
                             break;
+                        } else {
+                        JOptionPane.showMessageDialog(null, "No valid moves available.", "Invalid Move", JOptionPane.ERROR_MESSAGE);
+                        return;
                         }
                     }
                 }
