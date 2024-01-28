@@ -172,6 +172,9 @@ public class TalabiaGame
 
                 // Check if the clicked button has a time piece
                 else if (board.getPieceAt(row, col).equals("T1") || board.getPieceAt(row, col).equals("T2")) {
+                    // Store valid moves in a list
+                    List<int[]> validMoves = new ArrayList<>();
+                
                     // Check all possible diagonal moves
                     for (int dRow = -1; dRow <= 1; dRow += 2) {
                         for (int dCol = -1; dCol <= 1; dCol += 2) {
@@ -179,26 +182,53 @@ public class TalabiaGame
                             for (dist = 1; dist < 6; dist++) {
                                 int newRow = row + dRow * dist;
                                 int newCol = col + dCol * dist;
-
+                
                                 // Check if the move is within the board boundaries
                                 if (newRow < 0 || newRow >= 6 || newCol < 0 || newCol >= 7) {
                                     break;
                                 }
-
-                                // Check if the destination square is empty
+                
+                                // Add the current position as a valid move
+                                validMoves.add(new int[]{newRow, newCol});
+                
+                                // Check if the destination square is not empty
                                 if (!board.getPieceAt(newRow, newCol).isEmpty()) {
-                                    // If the piece belongs to the opponent, capture it
-                                    if (board.getPieceAt(newRow, newCol).charAt(1) != board.getPieceAt(row, col).charAt(1)) {
-                                        board.movePiece(row, col, newRow, newCol);
-                                        break;
-                                    } else {
-                                        // If the square is occupied by the player's own piece, the move is not valid
-                                        JOptionPane.showMessageDialog(null, "Invalid Move: No valid moves available.", "Invalid Move", JOptionPane.ERROR_MESSAGE);
-                                        return;
-                                    }
+                                    break;
                                 }
                             }
                         }
+                    }
+                
+                    // If there are valid moves, allow the player to choose
+                    if (!validMoves.isEmpty()) {
+                        Object[] options = new Object[validMoves.size()];
+                        for (int i = 0; i < validMoves.size(); i++) {
+                            options[i] = "Move to " + Arrays.toString(validMoves.get(i));
+                        }
+                
+                        int n = JOptionPane.showOptionDialog(null,
+                                "Choose a move",
+                                "Multiple valid moves",
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE,
+                                null,
+                                options,
+                                options[0]);
+                
+                        // Check the player's choice
+                        if (n == JOptionPane.CLOSED_OPTION) {
+                            // Player closed the dialog without choosing, you can handle this case here
+                            JOptionPane.showMessageDialog(null, "Please choose a move.", "Move Canceled", JOptionPane.INFORMATION_MESSAGE);
+                            return;  // Return without switching the turn
+                        }
+                
+                        // Get the chosen move and move the piece
+                        int[] chosenMove = validMoves.get(n);
+                        board.movePiece(row, col, chosenMove[0], chosenMove[1]);
+                    } else {
+                        // No valid moves
+                        JOptionPane.showMessageDialog(null, "Invalid Move: No valid moves available.", "Invalid Move", JOptionPane.ERROR_MESSAGE);
+                        return;
                     }
                 }
                 // Check if the clicked button has a plus piece
