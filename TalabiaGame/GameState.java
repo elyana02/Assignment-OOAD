@@ -1,4 +1,5 @@
 import java.io.Serializable;
+
 import javax.swing.JButton;
 
 public class GameState implements Serializable {
@@ -47,11 +48,4 @@ public class GameState implements Serializable {
     public String[][] getPieceInfo() {
         return pieceInfo;
     }
-
-
-    
 }
-
-
-
-

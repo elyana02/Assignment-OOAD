@@ -1,7 +1,15 @@
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 public class HomePage extends JFrame {
 
@@ -48,27 +56,25 @@ public class HomePage extends JFrame {
         });
 
         // Load Previous Game Button
-    JButton loadGameButton = new JButton("Load Previous Game");
-    loadGameButton.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            GameState loadedGameState = GameFileManager.loadGame();
-            if (loadedGameState != null && mainGame != null) {
-                board.updateGameFromState(loadedGameState);
-                JOptionPane.showMessageDialog(HomePage.this, "Game loaded successfully!", "Load Game", JOptionPane.INFORMATION_MESSAGE);
-                // Refresh the board after loading the game (assuming your MainGame class has a refreshBoard method)
-                board.refreshBoard();
-            } else {
-                // Handle the case where loading failed
-                JOptionPane.showMessageDialog(HomePage.this, "Error: Unable to load the game.", "Load Game", JOptionPane.ERROR_MESSAGE);
+        JButton loadGameButton = new JButton("Load Previous Game");
+        loadGameButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GameState loadedGameState = GameFileManager.loadGame();
+                if (loadedGameState != null && mainGame != null) {
+                    board.updateGameFromState(loadedGameState);
+                    JOptionPane.showMessageDialog(HomePage.this, "Game loaded successfully!", "Load Game", JOptionPane.INFORMATION_MESSAGE);
+                    // Refresh the board after loading the game (assuming your MainGame class has a refreshBoard method)
+                    board.refreshBoard();
+                } else {
+                    // Handle the case where loading failed
+                    JOptionPane.showMessageDialog(HomePage.this, "Error: Unable to load the game.", "Load Game", JOptionPane.ERROR_MESSAGE);
+                }
             }
-        }
-    });
-
+        });
 
         optionsPanel.add(newGameButton);
         optionsPanel.add(loadGameButton);
-        
 
         homePanel.add(optionsPanel, BorderLayout.CENTER);
 
@@ -90,14 +96,10 @@ public class HomePage extends JFrame {
             newGame.setVisible(true);
         });
     }
-    
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             new HomePage(); // Creating an instance without assigning to a variable
         });
-    }    
+    }
 }
-
-    
-

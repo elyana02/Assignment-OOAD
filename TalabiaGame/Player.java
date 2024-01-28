@@ -1,16 +1,13 @@
 import java.util.Objects;
 
-public class Player
-{
+public class Player {
     private int playerNumber;   //player 1 or player 2
     
-    public Player(int playerNumber)
-    {
+    public Player(int playerNumber) {
         this.playerNumber = playerNumber;
     }
     
-    public int getPlayerNumber()
-    {
+    public int getPlayerNumber() {
         return playerNumber;
     }
     
@@ -30,5 +27,4 @@ public class Player
     public int hashCode() {
         return Objects.hash(playerNumber);
     }
-
 }
