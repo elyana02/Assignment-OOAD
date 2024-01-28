@@ -78,7 +78,7 @@ public class TalabiaGame
                         int newCol = col;
 
                         // Check if the move is valid using isValidPointMove
-                        if (isValidPlusMove(row, col, newRow, newCol)) {
+                        if (isValidPMove(row, col, newRow, newCol)) {
                             validMoves.add(new int[]{newRow, newCol});
                         }
                     }
@@ -233,7 +233,7 @@ public class TalabiaGame
                         int newCol = col + move[1];
 
                         // Continue moving in the same direction until reaching the board boundary
-                        while (isValidPlusMove(row, col, newRow, newCol)) {
+                        while (isValidPMove(row, col, newRow, newCol)) {
                             // Add the current position as a valid move
                             validMoves.add(new int[]{newRow, newCol});
 
@@ -363,7 +363,7 @@ public class TalabiaGame
             return false;
         }
 
-        private boolean isValidPlusMove(int oldRow, int oldCol, int newRow, int newCol) 
+        private boolean isValidPMove(int oldRow, int oldCol, int newRow, int newCol) 
         {
             // Check if the new position is within the board
             if (newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7) {
