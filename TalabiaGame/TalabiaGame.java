@@ -205,30 +205,28 @@ public class TalabiaGame
                 else if (board.getPieceAt(row, col).equals("Pl1") || board.getPieceAt(row, col).equals("Pl2")) {
                     // Check all possible horizontal and vertical moves
                     for (int[] move : new int[][]{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}) {
-                        int dist;
-                        for (dist = 1; dist < 6; dist++) {
-                            int newRow = row + move[0] * dist;
-                            int newCol = col + move[1] * dist;
-            
-                            // Check if the move is within the board boundaries
-                            if (newRow < 0 || newRow >= 6 || newCol < 0 || newCol >= 7) {
-                                break;
-                            }
-            
-                            // Check if the destination square is empty
-                            if (!board.getPieceAt(newRow, newCol).isEmpty()) {
-                                // If the piece belongs to the opponent, capture it
-                                if (board.getPieceAt(newRow, newCol).charAt(1) != board.getPieceAt(row, col).charAt(1)) {
-                                    board.movePiece(row, col, newRow, newCol);
-                                    break;
-                                } else {
-                                    // If the square is occupied by the player's own piece, the move is not valid
-                                    JOptionPane.showMessageDialog(null, "Invalid Move: Cannot capture your own piece.", "Invalid Move", JOptionPane.ERROR_MESSAGE);
-                                    return;
-                                }
+                        int newRow = row + move[0];
+                        int newCol = col + move[1];
+                
+                        // Continue moving in the same direction until reaching the board boundary or an obstacle
+                        while (isValidMove(newRow, newCol) && board.getPieceAt(newRow, newCol).isEmpty()) {
+                            newRow += move[0];
+                            newCol += move[1];
+                        }
+                
+                        // Check if the final position is within the board boundaries
+                        if (isValidMove(newRow, newCol)) {
+                            // Check if the destination square is either empty or occupied by the opponent's piece
+                            if (board.getPieceAt(newRow, newCol).isEmpty() || isOpponentPiece(newRow, newCol)) {
+                                board.movePiece(row, col, newRow, newCol);
+                                return;  // Exit the method after a valid move
                             }
                         }
                     }
+                
+                    // If no valid moves are found, display an error message
+                    JOptionPane.showMessageDialog(null, "Invalid Move: No valid moves available.", "Invalid Move", JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
                 // Check if the clicked button has a sun piece
                 else if (board.getPieceAt(row, col).equals("S1")|| board.getPieceAt(row, col).equals("S2")) 
