@@ -277,10 +277,14 @@ public class TalabiaGame
             }
         }
 
-        private boolean isValidMove(int newRow, int newCol) 
+           private boolean isValidMove(int newRow, int newCol) 
         {
-            // Check if the new position is within the board and is empty
-            return newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7;
+            // Check if the new position is within the board
+            if (newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7) {
+                // Check if the new position has an opponent piece
+                return !isValidPlayerMove(board.getPieceAt(newRow, newCol));
+            }
+            return false;
         }
         
         private boolean isValidPointMove(int newRow, int newCol, int n) 
