@@ -79,33 +79,43 @@ public class Board
             switch (piece) {
                 case "P1":
                     icon = new ImageIcon(getClass().getResource("p1.png"));
+                    boardButtons[row][col].setActionCommand("P1");
                     break;
                 case "P2":
                     icon = new ImageIcon(getClass().getResource("p2.png"));
+                    boardButtons[row][col].setActionCommand("P2");
                     break;
                 case "H1":
                     icon = new ImageIcon(getClass().getResource("h1.png"));
+                    boardButtons[row][col].setActionCommand("H1");
                     break;
                 case "H2":
                     icon = new ImageIcon(getClass().getResource("h2.png"));
+                    boardButtons[row][col].setActionCommand("H2");
                     break;
                 case "T1":
                     icon = new ImageIcon(getClass().getResource("t1.png"));
+                    boardButtons[row][col].setActionCommand("T1");
                     break;
                 case "T2":
                     icon = new ImageIcon(getClass().getResource("t2.png"));
+                    boardButtons[row][col].setActionCommand("T2");
                     break;
                 case "Pl1":
                     icon = new ImageIcon(getClass().getResource("plus1.png"));
+                    boardButtons[row][col].setActionCommand("Pl1");
                     break;
                 case "Pl2":
                     icon = new ImageIcon(getClass().getResource("plus2.png"));
+                    boardButtons[row][col].setActionCommand("Pl2");
                     break;
                 case "S1":
                     icon = new ImageIcon(getClass().getResource("s1.png"));
+                    boardButtons[row][col].setActionCommand("S1");
                     break;
                 case "S2":
                     icon = new ImageIcon(getClass().getResource("s2.png"));
+                    boardButtons[row][col].setActionCommand("S2");
                     break;
                 default:
                     icon = null;
@@ -113,7 +123,7 @@ public class Board
 
             }
             boardButtons[row][col].setIcon(icon);
-            boardButtons[row][col].setActionCommand(piece); // Set piece information as action command
+            //boardButtons[row][col].setActionCommand(piece); // Set piece information as action command
 
         } catch (Exception e) 
         {
@@ -147,9 +157,8 @@ public class Board
 
         // Check if the destination square contains an opposing player's piece
         if (!boardButtons[newRow][newCol].getActionCommand().isEmpty() &&
-        boardButtons[newRow][newCol].getActionCommand().charAt(1) != boardButtons[oldRow][oldCol]
-        .getActionCommand().charAt(1)) {
-
+        boardButtons[newRow][newCol].getActionCommand() != boardButtons[oldRow][oldCol].getActionCommand())
+        {
             // Capture the piece
             boardButtons[newRow][newCol].setIcon(boardButtons[oldRow][oldCol].getIcon());
             boardButtons[oldRow][oldCol].setIcon(null);
