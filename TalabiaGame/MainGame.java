@@ -14,8 +14,6 @@ public class MainGame extends JFrame {
         this.boardButtons = new JButton[6][7]; // Assuming the size of the boardButtons array is known
         initializeGUI();
         setupMenuBar();
-        HomePage homePage = new HomePage();
-        homePage.setMainGame(this);
     }
 
     public void setCurrentPlayer(Player player) {
