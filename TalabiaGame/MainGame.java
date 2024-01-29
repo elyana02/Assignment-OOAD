@@ -22,6 +22,7 @@ public class MainGame extends JFrame {
         this.boardButtons = new JButton[6][7]; // Assuming the size of the boardButtons array is known
         initializeGUI();
         setupMenuBar();
+        showGameStartDialog();
     }
 
     public void setCurrentPlayer(Player player) {
@@ -108,6 +109,19 @@ public class MainGame extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
     }
+
+        private void showGameStartDialog() {
+            Object[] options = {"Start the Game"};
+            JOptionPane.showOptionDialog(
+                    null,
+                    "Blue is Player 1. Yellow is Player 2.",                
+                    "Game Information",
+                    JOptionPane.DEFAULT_OPTION,  // Default option for Enter key
+                    JOptionPane.INFORMATION_MESSAGE,
+                    null,
+                    options,
+                    options[0]);
+        }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
