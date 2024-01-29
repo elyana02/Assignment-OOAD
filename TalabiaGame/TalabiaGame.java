@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+//Act as Game Controller
 public class TalabiaGame
 {
     private static TalabiaGame instance;  // Singleton instance
@@ -102,7 +103,7 @@ public class TalabiaGame
 
                         int n = JOptionPane.showOptionDialog(null,
                                 "Choose a move",
-                                "Multiple valid moves",
+                                "Point valid moves",
                                 JOptionPane.YES_NO_OPTION,
                                 JOptionPane.QUESTION_MESSAGE,
                                 null,
@@ -119,6 +120,8 @@ public class TalabiaGame
                         // Get the chosen move and move the piece
                         int[] chosenMove = validMoves.get(n);
                         board.movePiece(row, col, chosenMove[0], chosenMove[1]);
+
+                        this.direction = (board != null) ? board.getDirection(chosenMove[0], chosenMove[1]) : 0;
                     } else {
                         // No valid moves
                         JOptionPane.showMessageDialog(null, "Invalid Move: No valid moves available.", "Invalid Move", JOptionPane.ERROR_MESSAGE);
@@ -155,7 +158,7 @@ public class TalabiaGame
 
                         int n = JOptionPane.showOptionDialog(null,
                                 "Choose a move",
-                                "Multiple valid moves",
+                                "Hourglass valid moves",
                                 JOptionPane.YES_NO_OPTION,
                                 JOptionPane.QUESTION_MESSAGE,
                                 null,
@@ -209,7 +212,7 @@ public class TalabiaGame
 
                         int n = JOptionPane.showOptionDialog(null,
                                 "Choose a move",
-                                "Multiple valid moves",
+                                "Time valid moves",
                                 JOptionPane.YES_NO_OPTION,
                                 JOptionPane.QUESTION_MESSAGE,
                                 null,
@@ -262,7 +265,7 @@ public class TalabiaGame
 
                         int n = JOptionPane.showOptionDialog(null,
                                 "Choose a move",
-                                "Multiple valid moves",
+                                "Plus valid moves",
                                 JOptionPane.YES_NO_OPTION,
                                 JOptionPane.QUESTION_MESSAGE,
                                 null,
@@ -309,7 +312,7 @@ public class TalabiaGame
 
                         int n = JOptionPane.showOptionDialog(null,
                                 "Choose a move",
-                                "Multiple valid moves",
+                                "Sun valid moves",
                                 JOptionPane.YES_NO_OPTION,
                                 JOptionPane.QUESTION_MESSAGE,
                                 null,
@@ -395,7 +398,7 @@ public class TalabiaGame
             return false;
         }
 
-            private boolean isValidTimeMove(int oldRow, int oldCol, int newRow, int newCol, int dRow, int dCol) {
+        private boolean isValidTimeMove(int oldRow, int oldCol, int newRow, int newCol, int dRow, int dCol) {
             // Check if the new position is within the board
             if (newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7) {
 
@@ -423,7 +426,7 @@ public class TalabiaGame
             }
             return false;
         }
-        
+
         private void changeTimeAndPlusPieces() 
         {
             for (int r = 0; r < 6; r++) {
