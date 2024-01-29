@@ -34,7 +34,7 @@ public class GameView extends JFrame {
 
         board = new Board();  // Use the instance variable instead of creating a new local variable
         currentPlayer = new Player(1);
-        this.talabiaGame = new TalabiaGame(board, currentPlayer);
+        this.talabiaGame = TalabiaGame.getInstance(board, currentPlayer); // Obtain the singleton instance of TalabiaGame        
         this.boardButtons = Board.getBoardButtons();
 
         JPanel boardPanel = new JPanel(new GridLayout(6, 7));
