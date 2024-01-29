@@ -1,3 +1,24 @@
+/**
+ * The GameState class represents the current state of the Talabia Chess Game.
+ * It encapsulates information about the game board, directions, piece positions,
+ * and the current player's turn. This class is designed for serialization and
+ * deserialization purposes, allowing the game state to be saved and loaded.
+ *
+ * Key Features:
+ * - Holds arrays representing the game board buttons, directions, and piece positions.
+ * - Stores the player number indicating whose turn it is.
+ * - Implements Serializable to support Java Object Serialization.
+ *
+ * Relationships:
+ * - Interacts closely with the GameFileManager class for saving and loading game state.
+ * - Used by the GameView class to update and display the game state.
+ *
+ * Usage Guidelines:
+ * - Use this class to represent and transport the current state of the game.
+ * - Serializable for saving and loading game progress using Object Serialization.
+ * - The class provides methods to retrieve specific information about the game state.
+ */
+
 import java.io.Serializable;
 
 import javax.swing.JButton;

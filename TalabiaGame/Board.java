@@ -1,3 +1,30 @@
+/**
+ * The Board class represents the game board in the Talabia Chess Game.
+ * It manages the state of the board, including the arrangement of pieces,
+ * player turns, and valid moves.
+ *
+ * Key Attributes:
+ * - boardButtons: A 2D array of buttons representing the game board.
+ * - directions: A 2D array storing the directions for each position on the board.
+ *
+ * Key Methods:
+ * - initializeBoard(): Initializes the game board with default settings.
+ * - getPieceAt(row, col): Returns the type of piece at a specified row and column.
+ * - setPieceIcon(pieceType, row, col): Sets the icon for a specified piece type.
+ * - movePiece(startRow, startCol, endRow, endCol): Moves a piece on the board.
+ * - refreshBoard(): Refreshes the graphical representation of the board.
+ * - reverseDirection(row, col): Reverses the direction associated with a position.
+ * - getDirection(row, col): Returns the direction associated with a position.
+ *
+ * Relationships:
+ * - The Board class is utilized by the GameView class to display and interact with the game board.
+ *
+ * Usage Guidelines:
+ * - Call initializeBoard() at the beginning of a new game.
+ * - Execute piece movements using movePiece method.
+ * - Refresh the board with refreshBoard() after each move.
+ */
+
 import java.awt.Dimension;
 
 import javax.swing.ImageIcon;

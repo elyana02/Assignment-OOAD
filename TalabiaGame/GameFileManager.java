@@ -1,3 +1,26 @@
+/**
+ * The GameFileManager class handles the saving and loading of game progress
+ * in the Talabia Chess Game. It uses Java Object Serialization to store the
+ * game state in a file.
+ *
+ * Key Methods:
+ * - saveProgress(boardButtons, directions, currentPlayer): Saves the current game progress.
+ * - extractBoardInfo(boardButtons, directions, currentPlayer): Extracts game information
+ *   for serialization from the current state of the board.
+ * - exitGame(): Prompts the user to confirm exiting the game and terminates the application if approved.
+ * - loadGame(): Opens a file dialog to allow the user to select a saved game file for loading.
+ *
+ * Relationships:
+ * - The GameFileManager class is closely associated with the GameState class for
+ *   serializing and deserializing game state information.
+ * - Utilized by the GameView class to provide save, load, and exit functionality.
+ *
+ * Usage Guidelines:
+ * - Use saveProgress to save the current game state during gameplay.
+ * - Utilize loadGame to load a previously saved game state.
+ * - Implement exitGame to prompt the user before exiting the game.
+ */
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;

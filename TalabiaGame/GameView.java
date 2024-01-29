@@ -1,3 +1,25 @@
+/**
+ * The GameView class is responsible for presenting the graphical user interface (GUI)
+ * of the Talabia Chess Game. It creates and manages the main game window, including
+ * the game board, menu bar, and player interactions.
+ *
+ * Key Features:
+ * - Displays the chessboard and handles player moves through graphical buttons.
+ * - Utilizes the Board and TalabiaGame classes to represent the game state and logic.
+ * - Implements a menu bar with options for saving, loading, and exiting the game.
+ * - Supports updating and refreshing the GUI based on the current game state.
+ *
+ * Relationships:
+ * - Collaborates with the Board, TalabiaGame, GameFileManager, and GameState classes.
+ * - Utilizes Swing components for GUI elements and user interactions.
+ * - Acts as a bridge between the game logic (TalabiaGame) and the graphical interface.
+ *
+ * Usage Guidelines:
+ * - Use this class to launch and manage the graphical user interface of the Talabia Chess Game.
+ * - Handles user inputs, triggers game actions, and updates the display accordingly.
+ * - Collaborates with other classes to maintain a consistent game state and user experience.
+ */
+
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

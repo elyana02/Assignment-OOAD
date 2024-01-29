@@ -1,3 +1,23 @@
+/**
+ * The HomePage class represents the initial screen of the Talabia Chess Game.
+ * It provides options for starting a new game or loading a previous game,
+ * acting as a gateway to the main game interface (GameView).
+ *
+ * Key Features:
+ * - Displays a welcome message and buttons for starting a new game or loading a previous game.
+ * - Serves as the entry point to the Talabia Chess Game, connecting the user to the main game view.
+ * - Utilizes the GameFileManager class for loading saved games.
+ *
+ * Relationships:
+ * - Collaborates with the GameView and GameFileManager classes.
+ * - Acts as a bridge between the user's initial choices and the main game interface.
+ *
+ * Usage Guidelines:
+ * - Instantiate this class to present the Talabia Chess Game's home screen.
+ * - Allows users to choose between starting a new game or loading a previously saved game.
+ * - Directs users to the main game interface (GameView) based on their selections.
+ */
+
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridLayout;

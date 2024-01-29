@@ -1,3 +1,26 @@
+/**
+ * The TalabiaGame class represents the core game controller for the Talabia Chess Game.
+ * It manages the game state, player turns, and rules of movement for various chess pieces.
+ *
+ * Key Features:
+ * - Implements the Singleton pattern to ensure a single instance of the game controller.
+ * - Manages the game board, current player, and turn counts.
+ * - Validates and processes player moves based on the type of chess piece.
+ * - Handles switching turns between Player 1 and Player 2.
+ * - Tracks the number of turns each player has taken and triggers piece transformations.
+ *
+ * Relationships:
+ * - Collaborates with the Board class to access and manipulate the game board.
+ * - Utilizes the Player class to represent and switch between Player 1 and Player 2.
+ * - Provides an ActionListener for chess buttons in the GUI to respond to player moves.
+ *
+ * Usage Guidelines:
+ * - Obtain the singleton instance using the getInstance() method.
+ * - Use this class to control the flow of the Talabia Chess Game.
+ * - Interact with the game board, manage player turns, and process moves.
+ * - Integrates with the GUI's ActionListener to respond to player actions on the chessboard.
+ */
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
