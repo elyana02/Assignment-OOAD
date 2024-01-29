@@ -7,18 +7,28 @@ import java.util.Arrays;
 
 public class TalabiaGame
 {
+    private static TalabiaGame instance;  // Singleton instance
     public Board board;
     private Player currentPlayer;
     private int yellowTurns;
     private int blueTurns;
 
-    public TalabiaGame(Board board, Player currentPlayer) 
+    // Private constructor to prevent external instantiation
+    private TalabiaGame(Board board, Player currentPlayer) 
     {
         this.board = board;
         this.currentPlayer = currentPlayer;
         this.yellowTurns = 0;
         this.blueTurns = 0;
         this.board.initializeBoard();
+    }
+
+    // Public method to get the singleton instance
+    public static TalabiaGame getInstance(Board board, Player currentPlayer) {
+        if (instance == null) {
+            instance = new TalabiaGame(board, currentPlayer);
+        }
+        return instance;
     }
 
     private boolean isValidPlayerMove(String piece) 
