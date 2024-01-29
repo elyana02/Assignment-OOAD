@@ -1,7 +1,7 @@
 import java.util.Objects;
 
 public class Player {
-    private int playerNumber;   //player 1 or player 2
+    private int playerNumber;   //Player 1 or player 2
     
     public Player(int playerNumber) {
         this.playerNumber = playerNumber;

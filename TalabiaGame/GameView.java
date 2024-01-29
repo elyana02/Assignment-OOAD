@@ -2,6 +2,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -18,7 +19,7 @@ public class GameView extends JFrame {
     private Player currentPlayer;
 
     public GameView() {
-        this.boardButtons = new JButton[6][7]; // Assuming the size of the boardButtons array is known
+        this.boardButtons = new JButton[6][7];
         initializeGUI();
         setupMenuBar();
         showGameStartDialog();
@@ -27,14 +28,14 @@ public class GameView extends JFrame {
     public void setCurrentPlayer(Player player) {
         this.currentPlayer = player;
     }
-    
+
     private void initializeGUI() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Talabia Game");
 
-        board = new Board();  // Use the instance variable instead of creating a new local variable
+        board = new Board();
         currentPlayer = new Player(1);
-        this.talabiaGame = TalabiaGame.getInstance(board, currentPlayer); // Obtain the singleton instance of TalabiaGame        
+        this.talabiaGame = TalabiaGame.getInstance(board, currentPlayer);
         this.boardButtons = Board.getBoardButtons();
 
         JPanel boardPanel = new JPanel(new GridLayout(6, 7));
@@ -58,14 +59,14 @@ public class GameView extends JFrame {
     private void showGameStartDialog() {
         Object[] options = {"Start"};
         JOptionPane.showOptionDialog(
-            null,
-            "Blue is Player 1. Yellow is Player 2.",                
-            "Game Information",
-            JOptionPane.DEFAULT_OPTION,  // Default option for Enter key
-            JOptionPane.INFORMATION_MESSAGE,
-            null,
-            options,
-            options[0]);
+                null,
+                "Blue is Player 1. Yellow is Player 2.",
+                "Game Information",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                options,
+                options[0]);
     }
 
     private void setupMenuBar() {
@@ -79,39 +80,39 @@ public class GameView extends JFrame {
         JMenuItem saveMenuItem = new JMenuItem("Save Progress");
         saveMenuItem.setMnemonic(KeyEvent.VK_S);
         saveMenuItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    GameFileManager.saveProgress(Board.getBoardButtons(), Board.getDirections(), currentPlayer);
-                }
-            });
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GameFileManager.saveProgress(Board.getBoardButtons(), Board.getDirections(), currentPlayer);
+            }
+        });
 
         // Load Option
         JMenuItem loadMenuItem = new JMenuItem("Load Game");
         loadMenuItem.setMnemonic(KeyEvent.VK_L);
         loadMenuItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    GameState loadedGameState = GameFileManager.loadGame();
-                    if (loadedGameState != null && board != null) {
-                        board.updateGameFromState(loadedGameState);
-                        JOptionPane.showMessageDialog(null, "Game loaded successfully!", "Load Game", JOptionPane.INFORMATION_MESSAGE);
-                        // Refresh the board after loading the game
-                        board.refreshBoard();
-                    } else {
-                        // Handle the case where loading failed
-                        JOptionPane.showMessageDialog(null, "Error: Unable to load the game.", "Load Game", JOptionPane.ERROR_MESSAGE);
-                    }
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GameState loadedGameState = GameFileManager.loadGame();
+                if (loadedGameState != null && board != null) {
+                    board.updateGameFromState(loadedGameState);
+                    JOptionPane.showMessageDialog(null, "Game loaded successfully!", "Load Game", JOptionPane.INFORMATION_MESSAGE);
+                    // Refresh the board after loading the game
+                    board.refreshBoard();
+                } else {
+                    // Handle the case where loading failed
+                    JOptionPane.showMessageDialog(null, "Error: Unable to load the game.", "Load Game", JOptionPane.ERROR_MESSAGE);
                 }
-            });
+            }
+        });
 
         JMenuItem exitMenuItem = new JMenuItem("Exit");
         exitMenuItem.setMnemonic(KeyEvent.VK_E);
         exitMenuItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    GameFileManager.exitGame();
-                }
-            });
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GameFileManager.exitGame();
+            }
+        });
 
         optionMenu.add(saveMenuItem);
         optionMenu.add(loadMenuItem);
@@ -121,18 +122,17 @@ public class GameView extends JFrame {
 
         setJMenuBar(menuBar);
     }
-    
+
     public void updateDisplay(GameState gameState) {
         for (int row = 0; row < 6; row++) {
             for (int col = 0; col < 7; col++) {
                 String piece = gameState.getPieceAt(row, col);
-                board.setPieceIcon(piece, row, col); // Use setPieceIcon method
+                board.setPieceIcon(piece, row, col);
             }
         }
     }
 
-    private class ChessButtonListener implements ActionListener 
-    {
+    private class ChessButtonListener implements ActionListener {
         private int row;
         private int col;
 
@@ -143,14 +143,13 @@ public class GameView extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Handle button click, possibly by notifying the controller about the user's move (depending on your MVC design).
+            // Handle button click
             System.out.println("Button clicked at row " + row + ", col " + col);
         }
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> 
-        {
+        SwingUtilities.invokeLater(() -> {
             new GameView();
         });
     }

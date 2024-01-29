@@ -5,7 +5,7 @@ import javax.swing.JButton;
 public class GameState implements Serializable {
     private JButton[][] boardButtons;
     private int[][] directions;
-    private String[][] pieceInfo;  // Store information about pieces at each position
+    private String[][] pieceInfo;  // Stores information about pieces at each position
     private int playerTurn;
 
     public GameState(JButton[][] boardButtons, int[][] directions, String[][] pieceInfo, int playerTurn) {
@@ -40,7 +40,7 @@ public class GameState implements Serializable {
         if (row >= 0 && row < pieceInfo.length && col >= 0 && col < pieceInfo[row].length) {
             return pieceInfo[row][col];
         } else {
-            // Return an empty string or handle the out-of-bounds case as needed
+            // Return an empty string or handle the out of bounds case as needed
             return "";
         }
     }
