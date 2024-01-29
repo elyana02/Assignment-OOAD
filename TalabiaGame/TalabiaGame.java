@@ -414,16 +414,6 @@ public class TalabiaGame
             return false;
         }
         
-        private boolean isOpponentPiece(int newRow, int newCol) {
-            // Check if the piece at the destination position belongs to the opponent
-            int opponentPlayerNumber = (currentPlayer.getPlayerNumber() == 1) ? 2 : 1;
-            return board.getPieceAt(newRow, newCol).startsWith("P" + opponentPlayerNumber) ||
-            board.getPieceAt(newRow, newCol).startsWith("H" + opponentPlayerNumber) ||
-            board.getPieceAt(newRow, newCol).startsWith("T" + opponentPlayerNumber) ||
-            board.getPieceAt(newRow, newCol).startsWith("Pl" + opponentPlayerNumber) ||
-            board.getPieceAt(newRow, newCol).startsWith("S" + opponentPlayerNumber);
-        }
-
         private void changeTimeAndPlusPieces() 
         {
             for (int r = 0; r < 6; r++) {
