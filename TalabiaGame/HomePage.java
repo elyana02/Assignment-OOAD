@@ -5,11 +5,11 @@ import java.awt.event.ActionListener;
 
 public class HomePage extends JFrame {
 
-    private MainGame mainGame;
+    private GameView gameView;
     private Board board;
 
-    public HomePage(MainGame mainGame) {
-        this.mainGame = mainGame;
+    public HomePage(GameView gameView) {
+        this.gameView = gameView;
         initialize();
     }
 
@@ -18,12 +18,12 @@ public class HomePage extends JFrame {
         this.board = new Board();  // Initialize the board object
     }
 
-    public void setTalabiaGame(MainGame mainGame) {
-        this.mainGame = mainGame;
+    public void setTalabiaGame(GameView gameView) {
+        this.gameView = gameView;
     }
 
-    public void setMainGame(MainGame mainGame) {
-        this.mainGame = mainGame;
+    public void setMainGame(GameView gameView) {
+        this.gameView = gameView;
     }
 
     private void initialize() {
@@ -58,7 +58,7 @@ public class HomePage extends JFrame {
                     GameState loadedGameState = GameFileManager.loadGame();
                     if (loadedGameState != null) {
                         closeHomePage();
-                        MainGame newGame = new MainGame();
+                        GameView newGame = new GameView();
                         // Make sure board.updateGameFromState handles null checks
                         board.updateGameFromState(loadedGameState);
                         JOptionPane.showMessageDialog(HomePage.this, "Game loaded successfully!", "Load Game", JOptionPane.INFORMATION_MESSAGE);
@@ -93,7 +93,7 @@ public class HomePage extends JFrame {
 
     private void startNewGame() {
         SwingUtilities.invokeLater(() -> {
-            MainGame newGame = new MainGame();
+            GameView newGame = new GameView();
             setTalabiaGame(newGame);
             newGame.setVisible(true);
         });
