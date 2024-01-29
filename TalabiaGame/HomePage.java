@@ -1,15 +1,7 @@
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 public class HomePage extends JFrame {
 
@@ -23,6 +15,7 @@ public class HomePage extends JFrame {
 
     public HomePage() {
         initialize();
+        this.board = new Board();  // Initialize the board object
     }
 
     public void setTalabiaGame(MainGame mainGame) {
@@ -60,22 +53,31 @@ public class HomePage extends JFrame {
         loadGameButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                GameState loadedGameState = GameFileManager.loadGame();
-                if (loadedGameState != null && mainGame != null) {
-                    board.updateGameFromState(loadedGameState);
-                    JOptionPane.showMessageDialog(HomePage.this, "Game loaded successfully!", "Load Game", JOptionPane.INFORMATION_MESSAGE);
-                    // Refresh the board after loading the game (assuming your MainGame class has a refreshBoard method)
-                    board.refreshBoard();
+                // Assuming board is a class member in the HomePage class
+                if (board != null) {
+                    GameState loadedGameState = GameFileManager.loadGame();
+                    if (loadedGameState != null) {
+                        closeHomePage();
+                        MainGame newGame = new MainGame();
+                        // Make sure board.updateGameFromState handles null checks
+                        board.updateGameFromState(loadedGameState);
+                        JOptionPane.showMessageDialog(HomePage.this, "Game loaded successfully!", "Load Game", JOptionPane.INFORMATION_MESSAGE);
+                        // Refresh the board after loading the game
+                        board.refreshBoard();
+                    } else {
+                        // Handle the case where loading failed
+                        JOptionPane.showMessageDialog(HomePage.this, "Error: Unable to load the game.", "Load Game", JOptionPane.ERROR_MESSAGE);
+                    }
                 } else {
-                    // Handle the case where loading failed
-                    JOptionPane.showMessageDialog(HomePage.this, "Error: Unable to load the game.", "Load Game", JOptionPane.ERROR_MESSAGE);
+                    // Handle the case where board is not initialized in the HomePage class
+                    JOptionPane.showMessageDialog(HomePage.this, "Error: Board not initialized.", "Load Game", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
-
+        
         optionsPanel.add(newGameButton);
         optionsPanel.add(loadGameButton);
-
+        
         homePanel.add(optionsPanel, BorderLayout.CENTER);
 
         // Display the homepage
@@ -96,10 +98,10 @@ public class HomePage extends JFrame {
             newGame.setVisible(true);
         });
     }
-
+    
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             new HomePage(); // Creating an instance without assigning to a variable
         });
-    }
+    }    
 }
